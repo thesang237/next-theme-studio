@@ -22,7 +22,7 @@ interface ExportModalProps {
 export function ExportModal({ children }: ExportModalProps) {
   const tokens = useThemeStore((state) => state.tokens);
   const customTokens = useThemeStore((state) => state.customTokens);
-  
+
   const [copiedTab, setCopiedTab] = React.useState<string | null>(null);
 
   const codebaseCode = React.useMemo(() => exportToCodebase(tokens, customTokens), [tokens, customTokens]);
@@ -41,7 +41,7 @@ export function ExportModal({ children }: ExportModalProps) {
 
   const handleDownload = async (format: "codebase" | "figma" | "css") => {
     const filename = format === "css" ? "theme-studio.css" : "theme-studio.json";
-    
+
     // As per spec: "POSTs to /api/export with format + tokens. Triggers file download"
     try {
       const response = await fetch("/api/export", {
@@ -49,7 +49,7 @@ export function ExportModal({ children }: ExportModalProps) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ format, tokens, customTokens }),
       });
-      
+
       if (!response.ok) {
         throw new Error("Export failed");
       }
@@ -81,7 +81,7 @@ export function ExportModal({ children }: ExportModalProps) {
 
   return (
     <Dialog>
-      <DialogTrigger render={<span style={{ display: "contents" }} />}>
+      <DialogTrigger render={<button style={{ display: "contents" }} />}>
         {children}
       </DialogTrigger>
       <DialogContent className="max-w-[600px] bg-background border-border text-foreground p-0 overflow-hidden shadow-2xl">
@@ -112,14 +112,14 @@ export function ExportModal({ children }: ExportModalProps) {
                 </pre>
               </div>
               <div className="h-14 px-6 border-t border-border bg-background shrink-0 gap-3 flex items-center justify-end">
-                 <button onClick={() => handleCopy(codebaseCode, "codebase")} className="flex items-center gap-2 h-8 px-3 text-xs bg-card text-foreground hover:bg-accent hover:text-accent-foreground border border-border rounded transition">
-                   {copiedTab === "codebase" ? <Check className="w-3.5 h-3.5 text-green-400" /> : <Copy className="w-3.5 h-3.5" />}
-                   {copiedTab === "codebase" ? "Copied!" : "Copy to clipboard"}
-                 </button>
-                 <button onClick={() => handleDownload("codebase")} className="flex items-center gap-2 h-8 px-3 text-xs bg-white text-foreground hover:bg-muted font-medium rounded transition">
-                   <Download className="w-3.5 h-3.5" />
-                   Download
-                 </button>
+                <button onClick={() => handleCopy(codebaseCode, "codebase")} className="flex items-center gap-2 h-8 px-3 text-xs bg-card text-foreground hover:bg-accent hover:text-accent-foreground border border-border rounded transition">
+                  {copiedTab === "codebase" ? <Check className="w-3.5 h-3.5 text-green-400" /> : <Copy className="w-3.5 h-3.5" />}
+                  {copiedTab === "codebase" ? "Copied!" : "Copy to clipboard"}
+                </button>
+                <button onClick={() => handleDownload("codebase")} className="flex items-center gap-2 h-8 px-3 text-xs bg-white text-foreground hover:bg-muted font-medium rounded transition">
+                  <Download className="w-3.5 h-3.5" />
+                  Download
+                </button>
               </div>
             </TabsContent>
 
@@ -136,14 +136,14 @@ export function ExportModal({ children }: ExportModalProps) {
                 </pre>
               </div>
               <div className="h-14 px-6 border-t border-border bg-background shrink-0 gap-3 flex items-center justify-end">
-                 <button onClick={() => handleCopy(figmaCode, "figma")} className="flex items-center gap-2 h-8 px-3 text-xs bg-card text-foreground hover:bg-accent hover:text-accent-foreground border border-border rounded transition">
-                   {copiedTab === "figma" ? <Check className="w-3.5 h-3.5 text-green-400" /> : <Copy className="w-3.5 h-3.5" />}
-                   {copiedTab === "figma" ? "Copied!" : "Copy to clipboard"}
-                 </button>
-                 <button onClick={() => handleDownload("figma")} className="flex items-center gap-2 h-8 px-3 text-xs bg-white text-foreground hover:bg-muted font-medium rounded transition">
-                   <Download className="w-3.5 h-3.5" />
-                   Download
-                 </button>
+                <button onClick={() => handleCopy(figmaCode, "figma")} className="flex items-center gap-2 h-8 px-3 text-xs bg-card text-foreground hover:bg-accent hover:text-accent-foreground border border-border rounded transition">
+                  {copiedTab === "figma" ? <Check className="w-3.5 h-3.5 text-green-400" /> : <Copy className="w-3.5 h-3.5" />}
+                  {copiedTab === "figma" ? "Copied!" : "Copy to clipboard"}
+                </button>
+                <button onClick={() => handleDownload("figma")} className="flex items-center gap-2 h-8 px-3 text-xs bg-white text-foreground hover:bg-muted font-medium rounded transition">
+                  <Download className="w-3.5 h-3.5" />
+                  Download
+                </button>
               </div>
             </TabsContent>
 
@@ -160,14 +160,14 @@ export function ExportModal({ children }: ExportModalProps) {
                 </pre>
               </div>
               <div className="h-14 px-6 border-t border-border bg-background shrink-0 gap-3 flex items-center justify-end">
-                 <button onClick={() => handleCopy(cssCode, "css")} className="flex items-center gap-2 h-8 px-3 text-xs bg-card text-foreground hover:bg-accent hover:text-accent-foreground border border-border rounded transition">
-                   {copiedTab === "css" ? <Check className="w-3.5 h-3.5 text-green-400" /> : <Copy className="w-3.5 h-3.5" />}
-                   {copiedTab === "css" ? "Copied!" : "Copy to clipboard"}
-                 </button>
-                 <button onClick={() => handleDownload("css")} className="flex items-center gap-2 h-8 px-3 text-xs bg-white text-foreground hover:bg-muted font-medium rounded transition">
-                   <Download className="w-3.5 h-3.5" />
-                   Download
-                 </button>
+                <button onClick={() => handleCopy(cssCode, "css")} className="flex items-center gap-2 h-8 px-3 text-xs bg-card text-foreground hover:bg-accent hover:text-accent-foreground border border-border rounded transition">
+                  {copiedTab === "css" ? <Check className="w-3.5 h-3.5 text-green-400" /> : <Copy className="w-3.5 h-3.5" />}
+                  {copiedTab === "css" ? "Copied!" : "Copy to clipboard"}
+                </button>
+                <button onClick={() => handleDownload("css")} className="flex items-center gap-2 h-8 px-3 text-xs bg-white text-foreground hover:bg-muted font-medium rounded transition">
+                  <Download className="w-3.5 h-3.5" />
+                  Download
+                </button>
               </div>
             </TabsContent>
           </div>

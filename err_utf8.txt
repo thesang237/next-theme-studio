@@ -1,0 +1,85 @@
+﻿node.exe : 
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" 
+"C:\Program Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecifie 
+   d: (:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeComma 
+   ndError
+ 
+> Build error occurred
+Error: Turbopack build failed with 2 
+errors:
+./src/app/globals.css:2:2
+Module not found: Can't resolve 
+'shadcn/tailwind.css'
+[0m [90m 1 |[39m 
+[33m@[39m[36mimport[39m 
+[32m"tw-animate-css"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 2 |[39m 
+[33m@[39m[36mimport[39m 
+[32m"shadcn/tailwind.css"[39m[33m;[39m
+ [90m   |[39m  [31m[1m^[22m[39m
+ [90m 3 |[39m [33m*[39m[33m,[39m 
+[33m:[39m[33m:[39mbefore[33m,[39m 
+[33m:[39m[33m:[39mafter{
+ [90m 4 |[39m   [33m--[39mtw[33m-[39
+mborder[33m-[39mspacing[33m-[39mx[33m
+:[39m [35m0[39m[33m;[39m
+ [90m 5 |[39m   [33m--[39mtw[33m-[39
+mborder[33m-[39mspacing[33m-[39my[33m
+:[39m [35m0[39m[33m;[39m[0m
+
+
+
+Import trace:
+  Client Component Browser:
+    ./src/app/globals.css [Client 
+Component Browser]
+    ./src/app/layout.tsx [Server 
+Component]
+
+https://nextjs.org/docs/messages/module-no
+t-found
+
+
+./src/app/globals.css:1:2
+Module not found: Can't resolve 
+'tw-animate-css'
+[0m[31m[1m>[22m[39m[90m 1 |[39m 
+[33m@[39m[36mimport[39m 
+[32m"tw-animate-css"[39m[33m;[39m
+ [90m   |[39m  [31m[1m^[22m[39m
+ [90m 2 |[39m 
+[33m@[39m[36mimport[39m 
+[32m"shadcn/tailwind.css"[39m[33m;[39m
+ [90m 3 |[39m [33m*[39m[33m,[39m 
+[33m:[39m[33m:[39mbefore[33m,[39m 
+[33m:[39m[33m:[39mafter{
+ [90m 4 |[39m   [33m--[39mtw[33m-[39
+mborder[33m-[39mspacing[33m-[39mx[33m
+:[39m [35m0[39m[33m;[39m[0m
+
+
+
+Import trace:
+  Client Component Browser:
+    ./src/app/globals.css [Client 
+Component Browser]
+    ./src/app/layout.tsx [Server 
+Component]
+
+https://nextjs.org/docs/messages/module-no
+t-found
+
+
+    at <unknown> 
+(./src/app/globals.css:2:2)
+    at <unknown> (https://nextjs.org/docs/
+messages/module-not-found)
+    at <unknown> 
+(./src/app/globals.css:1:2)
+    at <unknown> (https://nextjs.org/docs/
+messages/module-not-found)

@@ -37,7 +37,7 @@ export function TypographyTokenEditor({ token, value, onChange }: TypographyToke
 
   if (token.type === "fontWeight") {
     return (
-      <Select value={value} onValueChange={(v) => v && onChange(v)}>
+      <Select value={value || ""} onValueChange={(v) => v && onChange(v)}>
         <SelectTrigger className="h-7 w-[120px] text-xs bg-card border-border focus:ring-1 focus:ring-ring">
           <SelectValue placeholder="Select weight" />
         </SelectTrigger>
@@ -65,10 +65,10 @@ export function TypographyTokenEditor({ token, value, onChange }: TypographyToke
 
   if (token.type === "fontFamily") {
     const isPreset = FONT_FAMILIES.some((f) => f.value === value);
-    
+
     return (
-      <Select 
-        value={isPreset ? value : undefined} 
+      <Select
+        value={isPreset ? value : value || ""}
         onValueChange={(v) => v && onChange(v)}
       >
         <SelectTrigger className="h-7 w-[140px] text-xs bg-card border-border focus:ring-1 focus:ring-ring">
