@@ -9,6 +9,7 @@ export interface ThemeStore {
   tokens: ThemeTokens;
   customTokens: CustomToken[];
   activeMode: "light" | "dark";
+  hasUserSetMode: boolean;
   activePreset: string | null;
   history: ThemeSnapshot[];
   historyIndex: number;
@@ -49,6 +50,7 @@ export const useThemeStore = create<ThemeStore>()(
       tokens: JSON.parse(JSON.stringify(DEFAULT_TOKENS)),
       customTokens: [],
       activeMode: "light",
+      hasUserSetMode: false,
       activePreset: "default",
       history: [],
       historyIndex: -1,
@@ -267,7 +269,7 @@ export const useThemeStore = create<ThemeStore>()(
       },
 
       // -- Mode Actions --
-      setActiveMode: (mode) => set({ activeMode: mode }),
+      setActiveMode: (mode) => set({ activeMode: mode, hasUserSetMode: true }),
 
       // -- Import --
       importTokens: (jsonStr) => {
@@ -302,6 +304,7 @@ export const useThemeStore = create<ThemeStore>()(
         tokens: state.tokens, 
         customTokens: state.customTokens,
         activeMode: state.activeMode,
+        hasUserSetMode: state.hasUserSetMode,
         activePreset: state.activePreset
       }),
     }

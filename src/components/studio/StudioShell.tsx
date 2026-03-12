@@ -20,14 +20,28 @@ export function StudioShell() {
 
   const [mobileTab, setMobileTab] = React.useState<"presets" | "preview" | "tokens">("preview");
 
-  const { setTheme } = useNextTheme();
+  const { setTheme, resolvedTheme } = useNextTheme();
   const injector = React.useMemo(() => createInjector(), []);
 
+  // Synchronize initial mode with system preference if user hasn't set one
   React.useEffect(() => {
-    // Fire immediately on mount
+    const { activeMode, hasUserSetMode } = useThemeStore.getState();
+    if (!hasUserSetMode && resolvedTheme && (resolvedTheme === "light" || resolvedTheme === "dark")) {
+      if (activeMode !== resolvedTheme) {
+        useThemeStore.setState({ activeMode: resolvedTheme });
+      }
+    }
+  }, [resolvedTheme]);
+
+  React.useEffect(() => {
+    // Fire immediately on mount/update
     const { tokens, customTokens, activeMode } = useThemeStore.getState();
     injector(tokens, customTokens, activeMode);
-    setTheme(activeMode);
+    
+    // Only call setTheme if we are sure we are on the client and have a value
+    if (activeMode) {
+      setTheme(activeMode);
+    }
 
     // Subscribe to token AND mode changes
     const unsub = useThemeStore.subscribe((state, prev) => {
@@ -41,7 +55,7 @@ export function StudioShell() {
       }
     });
     return () => unsub();
-  }, [injector]);
+  }, [injector, setTheme]);
 
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -76,7 +90,7 @@ export function StudioShell() {
           <div className="w-5 h-5 flex items-center justify-center bg-muted rounded-sm">
             <div className="w-2.5 h-2.5 bg-background rotate-45" />
           </div>
-          <span className="font-medium text-white tracking-wide">Theme Studio</span>
+          <span className="font-medium text-foreground tracking-wide">Theme Studio</span>
         </div>
 
         <div className="flex items-center gap-2">
@@ -84,7 +98,7 @@ export function StudioShell() {
             <button
               onClick={undo}
               disabled={!canUndo}
-              className="p-1.5 text-muted-foreground hover:text-white disabled:opacity-50 disabled:hover:text-muted-foreground transition-colors"
+              className="p-1.5 text-muted-foreground hover:text-foreground disabled:opacity-50 disabled:hover:text-muted-foreground transition-colors"
               title="Undo (Cmd+Z)"
             >
               <Undo2 className="w-4 h-4" />
@@ -93,7 +107,7 @@ export function StudioShell() {
             <button
               onClick={redo}
               disabled={!canRedo}
-              className="p-1.5 text-muted-foreground hover:text-white disabled:opacity-50 disabled:hover:text-muted-foreground transition-colors"
+              className="p-1.5 text-muted-foreground hover:text-foreground disabled:opacity-50 disabled:hover:text-muted-foreground transition-colors"
               title="Redo (Cmd+Shift+Z)"
             >
               <Redo2 className="w-4 h-4" />
@@ -103,7 +117,7 @@ export function StudioShell() {
           <div className="w-[1px] h-5 bg-popover mx-2" />
 
           <ExportModal>
-            <Button size="sm" variant="outline" className="h-8 gap-2 bg-card border-input hover:bg-accent hover:text-accent-foreground hover:text-white text-xs">
+            <Button size="sm" variant="outline" className="h-8 gap-2 bg-card border-input hover:bg-accent hover:text-accent-foreground text-xs">
               <Download className="w-4 h-4" />
               Export
             </Button>
