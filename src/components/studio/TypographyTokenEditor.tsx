@@ -30,6 +30,17 @@ const FONT_WEIGHTS = [
   { value: "900", label: "Black" },
 ];
 
+const FONT_FAMILIES = [
+  { value: "ui-sans-serif, system-ui, sans-serif", label: "System Sans" },
+  { value: "ui-serif, Georgia, serif", label: "System Serif" },
+  { value: "ui-monospace, SFMono-Regular, monospace", label: "System Mono" },
+  { value: "Inter, sans-serif", label: "Inter" },
+  { value: "Roboto, sans-serif", label: "Roboto" },
+  { value: "Geist, sans-serif", label: "Geist" },
+  { value: "Roboto Mono, monospace", label: "Roboto Mono" },
+  { value: "JetBrains Mono, monospace", label: "JetBrains Mono" },
+];
+
 export function TypographyTokenEditor({ token, value, onChange }: TypographyTokenEditorProps) {
   if (token.type === "fontSize" || token.type === "lineHeight") {
     return <ScalarTokenEditor token={token} value={value} onChange={onChange} />;
@@ -51,17 +62,6 @@ export function TypographyTokenEditor({ token, value, onChange }: TypographyToke
       </Select>
     );
   }
-
-  const FONT_FAMILIES = [
-    { value: "ui-sans-serif, system-ui, sans-serif", label: "System Sans" },
-    { value: "ui-serif, Georgia, serif", label: "System Serif" },
-    { value: "ui-monospace, SFMono-Regular, monospace", label: "System Mono" },
-    { value: "Inter, sans-serif", label: "Inter" },
-    { value: "Roboto, sans-serif", label: "Roboto" },
-    { value: "Geist, sans-serif", label: "Geist" },
-    { value: "Roboto Mono, monospace", label: "Roboto Mono" },
-    { value: "JetBrains Mono, monospace", label: "JetBrains Mono" },
-  ];
 
   if (token.type === "fontFamily") {
     const isPreset = FONT_FAMILIES.some((f) => f.value === value);

@@ -15,7 +15,7 @@ export function ShadowTokenEditor({ value, onChange }: ShadowTokenEditorProps) {
     <div className="flex items-center gap-3 w-full">
       <div className="flex items-center justify-center w-12 h-8 rounded bg-popover shrink-0 border border-input">
         <div
-          className="w-10 h-6 bg-white rounded-sm"
+          className="w-10 h-6 bg-card rounded-sm border border-border"
           style={{ boxShadow: value }}
         />
       </div>
@@ -23,6 +23,7 @@ export function ShadowTokenEditor({ value, onChange }: ShadowTokenEditorProps) {
         value={value}
         onChange={(e) => onChange(e.target.value)}
         rows={2}
+        aria-label="Box shadow value"
         className="text-xs font-mono bg-card border-border focus-visible:ring-1 focus-visible:ring-ring py-1 px-2 resize-none leading-relaxed"
       />
     </div>

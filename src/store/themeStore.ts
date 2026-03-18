@@ -4,6 +4,15 @@ import { ThemeTokens, CustomToken, ThemeSnapshot, TokenValue } from "@/lib/token
 import { DEFAULT_TOKENS } from "@/lib/tokens/defaults";
 import { PRESETS } from "@/lib/tokens/presets";
 
+// Debounce helper — collapses rapid calls (e.g. slider drag) into one history entry
+function debounce<T extends (...args: any[]) => void>(fn: T, wait: number): T {
+  let timer: ReturnType<typeof setTimeout>;
+  return ((...args: Parameters<T>) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn(...args), wait);
+  }) as T;
+}
+
 export interface ThemeStore {
   // ── State ──
   tokens: ThemeTokens;
@@ -37,6 +46,8 @@ export interface ThemeStore {
   canUndo: boolean;
   canRedo: boolean;
   pushHistory: () => void;
+  /** @internal — debounced wrapper around pushHistory; one snapshot per drag gesture */
+  _debouncedPushHistory: () => void;
 
   // ── Import/Export ──
   importTokens: (json: string) => void;
@@ -47,7 +58,7 @@ const MAX_HISTORY = 50;
 export const useThemeStore = create<ThemeStore>()(
   persist(
     (set, get) => ({
-      tokens: JSON.parse(JSON.stringify(DEFAULT_TOKENS)),
+      tokens: structuredClone(DEFAULT_TOKENS),
       customTokens: [],
       activeMode: "light",
       hasUserSetMode: false,
@@ -61,8 +72,8 @@ export const useThemeStore = create<ThemeStore>()(
       pushHistory: () => {
         set((state) => {
           const snapshot: ThemeSnapshot = {
-            tokens: JSON.parse(JSON.stringify(state.tokens)),
-            customTokens: JSON.parse(JSON.stringify(state.customTokens)),
+            tokens: structuredClone(state.tokens),
+            customTokens: structuredClone(state.customTokens),
             timestamp: Date.now(),
           };
 
@@ -90,8 +101,8 @@ export const useThemeStore = create<ThemeStore>()(
           const snapshot = state.history[newIndex];
 
           return {
-            tokens: JSON.parse(JSON.stringify(snapshot.tokens)),
-            customTokens: JSON.parse(JSON.stringify(snapshot.customTokens)),
+            tokens: structuredClone(snapshot.tokens),
+            customTokens: structuredClone(snapshot.customTokens),
             historyIndex: newIndex,
             canUndo: newIndex > 0,
             canRedo: true,
@@ -108,8 +119,8 @@ export const useThemeStore = create<ThemeStore>()(
           const snapshot = state.history[newIndex];
 
           return {
-            tokens: JSON.parse(JSON.stringify(snapshot.tokens)),
-            customTokens: JSON.parse(JSON.stringify(snapshot.customTokens)),
+            tokens: structuredClone(snapshot.tokens),
+            customTokens: structuredClone(snapshot.customTokens),
             historyIndex: newIndex,
             canUndo: true,
             canRedo: newIndex < state.history.length - 1,
@@ -119,8 +130,11 @@ export const useThemeStore = create<ThemeStore>()(
       },
 
       // -- Token Actions --
+      // Debounced so that rapid slider drags produce one history entry per gesture
+      _debouncedPushHistory: debounce(() => get().pushHistory(), 300),
+
       setToken: (mode, cssVar, value) => {
-        get().pushHistory();
+        get()._debouncedPushHistory();
         set((state) => ({
           tokens: {
             ...state.tokens,
@@ -129,7 +143,6 @@ export const useThemeStore = create<ThemeStore>()(
               [cssVar]: value,
             },
           },
-          activePreset: null,
         }));
       },
 
@@ -140,38 +153,44 @@ export const useThemeStore = create<ThemeStore>()(
             light: { ...state.tokens.light, [cssVar]: lightValue },
             dark: { ...state.tokens.dark, [cssVar]: darkValue },
           },
-          activePreset: null,
         }));
       },
 
       resetToken: (cssVar) => {
         get().pushHistory();
         set((state) => {
+          // Resolve baseline from the active preset, falling back to DEFAULT_TOKENS
+          const baselinePreset = state.activePreset
+            ? PRESETS.find((p) => p.id === state.activePreset)
+            : null;
+          const baseline = baselinePreset ? baselinePreset.tokens : DEFAULT_TOKENS;
+
           const newTokens = {
             light: { ...state.tokens.light },
             dark: { ...state.tokens.dark }
           };
 
-          if (DEFAULT_TOKENS.light[cssVar] !== undefined) {
-             newTokens.light[cssVar] = DEFAULT_TOKENS.light[cssVar];
+          if (baseline.light[cssVar] !== undefined) {
+             newTokens.light[cssVar] = structuredClone(baseline.light[cssVar]);
           } else {
              delete newTokens.light[cssVar];
           }
 
-          if (DEFAULT_TOKENS.dark[cssVar] !== undefined) {
-             newTokens.dark[cssVar] = DEFAULT_TOKENS.dark[cssVar];
+          if (baseline.dark[cssVar] !== undefined) {
+             newTokens.dark[cssVar] = structuredClone(baseline.dark[cssVar]);
           } else {
              delete newTokens.dark[cssVar];
           }
 
-          return { tokens: newTokens, activePreset: null };
+          // Preserve activePreset — we're restoring to its baseline, not departing from it
+          return { tokens: newTokens };
         });
       },
 
       resetAll: () => {
         get().pushHistory();
         set(() => ({
-          tokens: JSON.parse(JSON.stringify(DEFAULT_TOKENS)),
+          tokens: structuredClone(DEFAULT_TOKENS),
           customTokens: [],
           activePreset: "default",
         }));
@@ -182,11 +201,12 @@ export const useThemeStore = create<ThemeStore>()(
         get().pushHistory();
         set((state) => {
           const id = `custom-${Date.now()}`;
-          const newToken: CustomToken = { ...token, id, type: "custom", group: "custom" };
+          // Preserve the user-selected type instead of always overwriting to "custom"
+          const newToken: CustomToken = { ...token, id, group: "custom" };
           return {
             customTokens: [...state.customTokens, newToken],
             tokens: {
-               light: { ...state.tokens.light, [token.cssVar]: "" }, // Optional: Seed empty or omit till used
+               light: { ...state.tokens.light, [token.cssVar]: "" },
                dark: { ...state.tokens.dark, [token.cssVar]: "" }
             }
           };
@@ -251,8 +271,8 @@ export const useThemeStore = create<ThemeStore>()(
         get().pushHistory();
         set((state) => {
           const newTokens = {
-             light: { ...preset.tokens.light },
-             dark: { ...preset.tokens.dark }
+             light: structuredClone(preset.tokens.light),
+             dark: structuredClone(preset.tokens.dark)
           };
           
           // Carry over custom tokens

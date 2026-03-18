@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { ChevronRight, RotateCcw } from "lucide-react";
-import { TokenGroup as SchemaTokenGroup, CustomToken } from "@/lib/tokens/schema";
+import { TokenGroup as SchemaTokenGroup, CustomToken, Token } from "@/lib/tokens/schema";
 import { TOKEN_GROUPS } from "@/lib/tokens/groups";
 import { TokenRow } from "./TokenRow";
 import { CustomTokenForm } from "./CustomTokenForm";
@@ -22,16 +22,18 @@ export function TokenGroup({ group, customTokens = [], activeMode }: TokenGroupP
 
   const handleResetGroup = (e: React.MouseEvent) => {
     e.stopPropagation();
-    group.tokens.forEach((token: any) => resetToken(token.cssVar));
+    group.tokens.forEach((token: Token) => resetToken(token.cssVar));
   };
 
   return (
     <div className="flex flex-col border-b border-border last:border-0">
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="group/header flex items-center justify-between w-full h-8 px-2 select-none hover:bg-popover transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-      >
-        <div className="flex items-center gap-2">
+      {/* Group header row: button + sibling reset action (never nested) */}
+      <div className="group/header flex items-center w-full">
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          aria-expanded={isOpen}
+          className="flex items-center gap-2 flex-1 h-8 px-2 select-none hover:bg-popover transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+        >
           <ChevronRight
             className={`w-3.5 h-3.5 text-muted-foreground transition-transform duration-150 ${isOpen ? "rotate-90" : "rotate-0"
               }`}
@@ -40,16 +42,17 @@ export function TokenGroup({ group, customTokens = [], activeMode }: TokenGroupP
           <span className="flex items-center justify-center h-4 px-1.5 rounded-full bg-popover text-muted-foreground text-[10px] font-medium leading-none">
             {tokenCount}
           </span>
-        </div>
+        </button>
 
-        <span
+        <button
           onClick={handleResetGroup}
-          className="opacity-0 group-hover/header:opacity-100 p-1 text-muted-foreground hover:text-accent-foreground transition-colors rounded hover:bg-accent hover:text-accent-foreground"
+          className="opacity-0 group-hover/header:opacity-100 mr-1 p-1 text-muted-foreground hover:text-accent-foreground transition-colors rounded hover:bg-accent"
+          aria-label={`Reset all ${group.label} tokens to default`}
           title="Reset all tokens in group"
         >
           <RotateCcw className="w-3.5 h-3.5" />
-        </span>
-      </button>
+        </button>
+      </div>
 
       <div
         className={`grid transition-[grid-template-rows] duration-200 ease-out ${isOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]"

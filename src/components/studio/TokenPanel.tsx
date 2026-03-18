@@ -1,36 +1,44 @@
 "use client";
 
 import * as React from "react";
+import { useShallow } from "zustand/react/shallow";
 import { ModeToggle } from "./ModeToggle";
 import { useThemeStore } from "@/store/themeStore";
 import { TOKEN_GROUPS } from "@/lib/tokens/groups";
 import { DEFAULT_TOKENS } from "@/lib/tokens/defaults";
+import { PRESETS } from "@/lib/tokens/presets";
 import { TokenGroup } from "./TokenGroup";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { AlertCircle } from "lucide-react";
 
 export function TokenPanel() {
-  const tokens = useThemeStore((state) => state.tokens);
-  const customTokens = useThemeStore((state) => state.customTokens);
-  const activeMode = useThemeStore((state) => state.activeMode);
-  const resetAll = useThemeStore((state) => state.resetAll);
+  const { tokens, customTokens, activeMode, activePreset, resetAll } = useThemeStore(
+    useShallow((state) => ({
+      tokens: state.tokens,
+      customTokens: state.customTokens,
+      activeMode: state.activeMode,
+      activePreset: state.activePreset,
+      resetAll: state.resetAll,
+    }))
+  );
 
   const [isResetOpen, setIsResetOpen] = React.useState(false);
 
-  // Calculate modified count
+  // Calculate modified count — compare against the active preset's baseline, or DEFAULT_TOKENS if none
   const modifiedCount = React.useMemo(() => {
+    const baselinePreset = activePreset ? PRESETS.find((p) => p.id === activePreset) : null;
+    const baselineTokens = baselinePreset ? baselinePreset.tokens[activeMode] : DEFAULT_TOKENS[activeMode];
     let count = 0;
-    const allDefs = Object.keys(DEFAULT_TOKENS[activeMode]);
-    allDefs.forEach((key) => {
+    Object.keys(baselineTokens).forEach((key) => {
       const currentVal = tokens[activeMode][key];
-      const defaultVal = DEFAULT_TOKENS[activeMode][key];
-      if (currentVal !== undefined && JSON.stringify(currentVal) !== JSON.stringify(defaultVal)) {
+      const baseVal = baselineTokens[key];
+      if (currentVal !== undefined && JSON.stringify(currentVal) !== JSON.stringify(baseVal)) {
         count++;
       }
     });
     return count;
-  }, [tokens, activeMode]);
+  }, [tokens, activeMode, activePreset]);
 
   const totalTokens = React.useMemo(() => {
     return TOKEN_GROUPS.reduce((acc, group) => acc + group.tokens.length, 0);
@@ -98,7 +106,7 @@ export function TokenPanel() {
         </div>
       </ScrollArea>
 
-      <footer className="sticky bottom-0 z-10 flex items-center justify-between h-8 px-4 shrink-0 bg-background border-t border-border shadow-[0_-8px_16px_rgba(0,0,0,0.4)]">
+      <footer className="sticky bottom-0 z-10 flex items-center justify-between h-8 px-4 shrink-0 bg-background border-t border-border shadow-[0_-8px_16px_rgba(0,0,0,0.08)] dark:shadow-[0_-8px_16px_rgba(0,0,0,0.4)]">
         <span className="text-[10px] text-muted-foreground font-mono tracking-wide uppercase">
           {totalTokens} tokens
         </span>

@@ -5,6 +5,7 @@ import { RotateCcw, Trash2 } from "lucide-react";
 import { Token } from "@/lib/tokens/schema";
 import { useThemeStore } from "@/store/themeStore";
 import { DEFAULT_TOKENS } from "@/lib/tokens/defaults";
+import { PRESETS } from "@/lib/tokens/presets";
 import { ColorTokenEditor } from "./ColorTokenEditor";
 import { ScalarTokenEditor } from "./ScalarTokenEditor";
 import { ShadowTokenEditor } from "./ShadowTokenEditor";
@@ -20,33 +21,39 @@ interface TokenRowProps {
 
 export function TokenRow({ token, activeMode, isCustom = false }: TokenRowProps) {
   const storeValue = useThemeStore((state) => state.tokens[activeMode]?.[token.cssVar]);
+  const activePreset = useThemeStore((state) => state.activePreset);
   const setToken = useThemeStore((state) => state.setToken);
   const resetToken = useThemeStore((state) => state.resetToken);
   const removeCustomToken = useThemeStore((state) => state.removeCustomToken);
 
-  // Fallback to default if not in store (e.g. initial load before sync)
-  const defaultValue = DEFAULT_TOKENS[activeMode][token.cssVar];
-  const value = storeValue ?? defaultValue ?? "";
+  // Resolve baseline from the active preset, falling back to DEFAULT_TOKENS
+  const baselinePreset = activePreset ? PRESETS.find((p) => p.id === activePreset) : null;
+  const baselineValue = baselinePreset
+    ? baselinePreset.tokens[activeMode][token.cssVar]
+    : DEFAULT_TOKENS[activeMode][token.cssVar];
+  const value = storeValue ?? baselineValue ?? "";
   
-  const isModified = storeValue !== undefined && JSON.stringify(storeValue) !== JSON.stringify(defaultValue);
+  const isModified = storeValue !== undefined && JSON.stringify(storeValue) !== JSON.stringify(baselineValue);
 
-  const handleChange = (newValue: string | { h: number; s: number; l: number; a?: number }) => {
-    setToken(activeMode, token.cssVar, newValue);
-  };
+  const handleChange = React.useCallback(
+    (newValue: string | { h: number; s: number; l: number; a?: number }) => {
+      setToken(activeMode, token.cssVar, newValue);
+    },
+    [activeMode, token.cssVar, setToken]
+  );
 
   const renderEditor = () => {
     if (token.type === "color") {
-      // @ts-ignore - we know it's HSLValue
-      return <ColorTokenEditor token={token} value={value} onChange={handleChange} />;
+      return <ColorTokenEditor token={token} value={value as { h: number; s: number; l: number; a?: number }} onChange={handleChange as (v: { h: number; s: number; l: number; a?: number }) => void} />;
     }
     if (token.type === "radius" || token.type === "spacing" || token.type === "fontSize") {
-      return <ScalarTokenEditor token={token} value={value as string} onChange={handleChange as any} />;
+      return <ScalarTokenEditor token={token} value={value as string} onChange={handleChange as (v: string) => void} />;
     }
     if (token.type === "shadow") {
-      return <ShadowTokenEditor token={token} value={value as string} onChange={handleChange as any} />;
+      return <ShadowTokenEditor token={token} value={value as string} onChange={handleChange as (v: string) => void} />;
     }
     if (token.group === "typography" && (token.type === "fontFamily" || token.type === "fontWeight" || token.type === "lineHeight")) {
-      return <TypographyTokenEditor token={token} value={value as string} onChange={handleChange as any} />;
+      return <TypographyTokenEditor token={token} value={value as string} onChange={handleChange as (v: string) => void} />;
     }
 
     // Fallback: inline text input for custom or unmapped types
@@ -66,10 +73,15 @@ export function TokenRow({ token, activeMode, isCustom = false }: TokenRowProps)
           <TooltipProvider delay={400}>
             <Tooltip>
               <TooltipTrigger
-                render={<div className="w-1.5 h-1.5 rounded-full bg-amber-400" />}
+                render={
+                  <button
+                    className="w-3 h-3 rounded-full bg-amber-400 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-amber-400 focus-visible:ring-offset-1"
+                    aria-label="Token modified — click reset to restore default"
+                  />
+                }
               />
               <TooltipContent side="right" className="text-xs bg-popover text-foreground border-input">
-                Modified — click reset to restore default
+                Modified — click reset to restore
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
@@ -97,14 +109,14 @@ export function TokenRow({ token, activeMode, isCustom = false }: TokenRowProps)
                     <button
                       onClick={() => resetToken(token.cssVar)}
                       className="opacity-0 group-hover:opacity-100 p-1 text-muted-foreground hover:text-accent-foreground transition-all rounded hover:bg-accent hover:text-accent-foreground"
-                      aria-label="Reset to default"
+                      aria-label="Reset"
                     >
                       <RotateCcw className="w-3.5 h-3.5" />
                     </button>
                   }
                 />
                 <TooltipContent side="left" className="text-xs bg-popover text-foreground border-input">
-                  Reset to default
+                  Reset
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>

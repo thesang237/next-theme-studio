@@ -22,10 +22,17 @@ export function ModeToggle() {
     setTheme(mode);
   };
 
-  if (!mounted) return null;
+  if (!mounted) {
+    // Same dimensions as the real toggle — prevents layout shift on hydration
+    return <div className="inline-flex h-7 w-[138px] rounded-md bg-card border border-border" aria-hidden="true" />;
+  }
 
   return (
-    <div className="relative inline-flex items-center h-7 p-0.5 rounded-md bg-card border border-border w-fit text-xs font-medium focus-visible:ring-1 focus-visible:ring-ring">
+    <div
+      role="radiogroup"
+      aria-label="Preview mode"
+      className="relative inline-flex items-center h-7 p-0.5 rounded-md bg-card border border-border w-fit text-xs font-medium focus-visible:ring-1 focus-visible:ring-ring"
+    >
       {/* Sliding background */}
       <div
         className={cn(
@@ -36,6 +43,8 @@ export function ModeToggle() {
       
       <button
         type="button"
+        role="radio"
+        aria-checked={activeMode === "light"}
         onClick={() => handleModeChange("light")}
         className={cn(
           "relative z-10 flex items-center justify-center w-16 h-full gap-1.5 rounded transition-colors duration-150",
@@ -48,6 +57,8 @@ export function ModeToggle() {
 
       <button
         type="button"
+        role="radio"
+        aria-checked={activeMode === "dark"}
         onClick={() => handleModeChange("dark")}
         className={cn(
           "relative z-10 flex items-center justify-center w-16 h-full gap-1.5 rounded transition-colors duration-150",

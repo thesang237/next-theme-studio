@@ -45,7 +45,7 @@ export function PresetPicker() {
       const presetTokens = preset.tokens[activeMode];
       const stateTokens = currentTokens[activeMode];
       return Object.keys(presetTokens).some(
-        (key) => presetTokens[key] !== stateTokens[key]
+        (key) => JSON.stringify(presetTokens[key]) !== JSON.stringify(stateTokens[key])
       );
     },
     [activePresetId, activeMode, currentTokens]

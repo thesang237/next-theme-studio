@@ -11,43 +11,24 @@ interface ScalarTokenEditorProps {
   onChange: (value: string) => void;
 }
 
+interface SliderConfig {
+  min: number;
+  max: number;
+  step: number;
+  unit: string;
+  showSlider: boolean;
+}
+
+const SLIDER_CONFIG: Record<string, SliderConfig> = {
+  radius:   { min: 0,   max: 2,   step: 0.05, unit: "rem", showSlider: true  },
+  spacing:  { min: 0,   max: 8,   step: 0.25, unit: "rem", showSlider: true  },
+  fontSize: { min: 0.5, max: 4,   step: 0.05, unit: "rem", showSlider: true  },
+};
+
+const DEFAULT_CONFIG: SliderConfig = { min: 0, max: 100, step: 1, unit: "", showSlider: false };
+
 export function ScalarTokenEditor({ token, value, onChange }: ScalarTokenEditorProps) {
-  // Config based on type
-  let min = 0;
-  let max = 100;
-  let step = 1;
-  let unit = "";
-  let showSlider = true;
-
-  if (token.type === "radius") {
-    min = 0;
-    max = 2;
-    step = 0.05;
-    unit = "rem";
-  } else if (token.type === "spacing") {
-    min = 0;
-    max = 8;
-    step = 0.25;
-    unit = "rem";
-  } else if (token.type === "fontSize") {
-    min = 0.5;
-    max = 4;
-    step = 0.05;
-    unit = "rem";
-  } else if (token.type === "lineHeight") {
-    min = 1;
-    max = 2.5;
-    step = 0.05;
-    unit = "";
-    showSlider = false;
-  } else if (token.type === "fontWeight") {
-    min = 100;
-    max = 900;
-    step = 100;
-    unit = "";
-    showSlider = false;
-
-  }
+  const { min, max, step, unit, showSlider } = SLIDER_CONFIG[token.type] ?? DEFAULT_CONFIG;
 
   // Parse numeric part
   let parsedValue = parseFloat(value);
