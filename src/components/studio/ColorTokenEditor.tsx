@@ -4,8 +4,7 @@ import * as React from "react";
 import * as SliderPrimitive from "@radix-ui/react-slider";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
-import { Token } from "@/lib/tokens/schema";
-import { HSLValue } from "@/lib/tokens/schema";
+import { Token, HSLValue } from "@/lib/tokens/schema";
 import { hslToHex, hexToHsl, hslToCssString } from "@/lib/colorUtils";
 import { cn } from "@/lib/utils";
 
@@ -15,34 +14,29 @@ interface ColorTokenEditorProps {
   onChange: (value: HSLValue) => void;
 }
 
-function debounce<T extends (...args: any[]) => void>(func: T, wait: number) {
-  let timeout: NodeJS.Timeout;
-  return (...args: Parameters<T>) => {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => func(...args), wait);
-  };
-}
 
 export function ColorTokenEditor({ token, value, onChange }: ColorTokenEditorProps) {
   const [isOpen, setIsOpen] = React.useState(false);
   const [localValue, setLocalValue] = React.useState<HSLValue>(value);
   const [hexInput, setHexInput] = React.useState(hslToHex(value));
   const [isValidHex, setIsValidHex] = React.useState(true);
+  // Track whether the user is actively dragging a slider so we don't
+  // overwrite localValue mid-drag when an external store update arrives
+  const isDragging = React.useRef(false);
 
+  // S4 fix: sync from store whenever value changes, unless actively dragging
   React.useEffect(() => {
-    if (!isOpen) {
+    if (!isDragging.current) {
       setLocalValue(value);
       setHexInput(hslToHex(value));
     }
-  }, [value, isOpen]);
-
-  const debouncedOnChange = React.useMemo(() => debounce(onChange, 16), [onChange]);
+  }, [value]);
 
   const updateColor = (updates: Partial<HSLValue>) => {
     const nextValue = { ...localValue, ...updates };
     setLocalValue(nextValue);
     setHexInput(hslToHex(nextValue));
-    debouncedOnChange(nextValue);
+    onChange(nextValue);
   };
 
   const handleHexChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -56,7 +50,7 @@ export function ColorTokenEditor({ token, value, onChange }: ColorTokenEditorPro
         hsl.a = localValue.a;
       }
       setLocalValue(hsl);
-      debouncedOnChange(hsl);
+      onChange(hsl);
     } else {
       setIsValidHex(false);
     }
@@ -69,7 +63,6 @@ export function ColorTokenEditor({ token, value, onChange }: ColorTokenEditorPro
     }
   };
 
-  const supportsAlpha = token.id === "background" || token.id.includes("overlay"); // Just a rough guess or if `a` is present
   const hasAlpha = typeof localValue.a === "number";
 
   // Gradients for sliders
@@ -110,7 +103,8 @@ export function ColorTokenEditor({ token, value, onChange }: ColorTokenEditorPro
                 value={[localValue.h]}
                 max={360}
                 step={1}
-                onValueChange={([h]) => updateColor({ h })}
+                onValueChange={([h]) => { isDragging.current = true; updateColor({ h }); }}
+                onValueCommit={() => { isDragging.current = false; }}
               >
                 <SliderPrimitive.Track className={sliderTrackClass} style={{ background: hGradient }} />
                 <SliderPrimitive.Thumb className={sliderThumbClass} />
@@ -128,7 +122,8 @@ export function ColorTokenEditor({ token, value, onChange }: ColorTokenEditorPro
                 value={[localValue.s]}
                 max={100}
                 step={1}
-                onValueChange={([s]) => updateColor({ s })}
+                onValueChange={([s]) => { isDragging.current = true; updateColor({ s }); }}
+                onValueCommit={() => { isDragging.current = false; }}
               >
                 <SliderPrimitive.Track className={sliderTrackClass} style={{ background: sGradient }} />
                 <SliderPrimitive.Thumb className={sliderThumbClass} />
@@ -146,7 +141,8 @@ export function ColorTokenEditor({ token, value, onChange }: ColorTokenEditorPro
                 value={[localValue.l]}
                 max={100}
                 step={1}
-                onValueChange={([l]) => updateColor({ l })}
+                onValueChange={([l]) => { isDragging.current = true; updateColor({ l }); }}
+                onValueCommit={() => { isDragging.current = false; }}
               >
                 <SliderPrimitive.Track className={sliderTrackClass} style={{ background: lGradient }} />
                 <SliderPrimitive.Thumb className={sliderThumbClass} />
@@ -165,7 +161,8 @@ export function ColorTokenEditor({ token, value, onChange }: ColorTokenEditorPro
                   value={[localValue.a! * 100]}
                   max={100}
                   step={1}
-                  onValueChange={([a]) => updateColor({ a: a / 100 })}
+                  onValueChange={([a]) => { isDragging.current = true; updateColor({ a: a / 100 }); }}
+                  onValueCommit={() => { isDragging.current = false; }}
                 >
                   <div className="absolute inset-0 rounded-full" style={{ backgroundImage: 'conic-gradient(#fff 90deg, #ccc 90deg 180deg, #fff 180deg 270deg, #ccc 270deg)', backgroundSize: '8px 8px' }} />
                   <SliderPrimitive.Track className={sliderTrackClass} style={{ background: aGradient }} />

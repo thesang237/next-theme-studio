@@ -81,10 +81,8 @@ export function ExportModal({ children }: ExportModalProps) {
 
   return (
     <Dialog>
-      <DialogTrigger render={<button style={{ display: "contents" }} />}>
-        {children}
-      </DialogTrigger>
-      <DialogContent className="max-w-[600px] bg-background border-border text-foreground p-0 overflow-hidden shadow-2xl">
+      <DialogTrigger render={children as React.ReactElement} />
+      <DialogContent className="sm:max-w-[800px] bg-background border-border text-foreground p-0 overflow-hidden shadow-2xl">
         <DialogHeader className="px-6 pt-6 pb-2 border-b border-border">
           <DialogTitle className="text-lg font-medium">Export Theme</DialogTitle>
         </DialogHeader>
@@ -92,9 +90,9 @@ export function ExportModal({ children }: ExportModalProps) {
         <Tabs defaultValue="codebase" className="flex flex-col w-full h-[450px]">
           <div className="px-6 pt-2 border-b border-border bg-background">
             <TabsList className="bg-card/50 border border-border/50 w-full justify-start rounded-md h-9 p-0.5">
-              <TabsTrigger value="codebase" className="text-xs data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-4 h-full rounded-sm">Codebase</TabsTrigger>
-              <TabsTrigger value="figma" className="text-xs data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-4 h-full rounded-sm">Figma Variables</TabsTrigger>
-              <TabsTrigger value="css" className="text-xs data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-4 h-full rounded-sm">CSS</TabsTrigger>
+              <TabsTrigger value="codebase" className="text-xs data-selected:bg-primary data-selected:text-primary-foreground px-4 h-full rounded-sm">Codebase</TabsTrigger>
+              <TabsTrigger value="figma" className="text-xs data-selected:bg-primary data-selected:text-primary-foreground px-4 h-full rounded-sm">Figma Variables</TabsTrigger>
+              <TabsTrigger value="css" className="text-xs data-selected:bg-primary data-selected:text-primary-foreground px-4 h-full rounded-sm">CSS</TabsTrigger>
             </TabsList>
           </div>
 

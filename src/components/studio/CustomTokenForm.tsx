@@ -68,12 +68,13 @@ export function CustomTokenForm() {
   return (
     <div className="flex items-center gap-2 px-2 py-2 mt-1 mx-2 bg-card/50 rounded-lg border border-border/50">
       <div className="flex items-center bg-background border border-border rounded px-1.5 h-7 focus-within:ring-1 focus-within:ring-ring">
-        <span className="text-muted-foreground font-mono text-xs select-none">--</span>
+        <span className="text-muted-foreground font-mono text-xs select-none" aria-hidden="true">--</span>
         <input
           value={cssVar.startsWith("--") ? cssVar.slice(2) : cssVar}
           onChange={(e) => setCssVar(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""))}
           onKeyDown={handleKeyDown}
           placeholder="my-token"
+          aria-label="CSS variable name (without leading dashes)"
           className={`bg-transparent outline-none w-24 text-xs font-mono pl-0.5 ${
             isDuplicate && cssVar ? "text-red-400" : "text-foreground"
           }`}
@@ -104,8 +105,8 @@ export function CustomTokenForm() {
       <button
         onClick={handleAdd}
         disabled={!isValid}
-        className="flex items-center justify-center w-7 h-7 ml-auto shrink-0 bg-muted text-muted-foreground rounded shadow-sm hover:bg-white disabled:opacity-50 disabled:pointer-events-none transition-colors"
-        title="Add Token"
+        aria-label="Add custom token"
+        className="flex items-center justify-center w-7 h-7 ml-auto shrink-0 bg-muted text-muted-foreground rounded shadow-sm hover:bg-accent hover:text-accent-foreground disabled:opacity-50 disabled:pointer-events-none transition-colors"
       >
         <Plus className="w-4 h-4" />
       </button>

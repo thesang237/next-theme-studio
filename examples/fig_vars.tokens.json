@@ -1,0 +1,1101 @@
+{
+    "collections": [
+        {
+            "name": "Theme Studio",
+            "modes": [
+                "light",
+                "dark"
+            ],
+            "variables": [
+                {
+                    "name": "colors/background",
+                    "type": "COLOR",
+                    "description": "Default background color of <body />...",
+                    "valuesByMode": {
+                        "light": {
+                            "r": 1,
+                            "g": 1,
+                            "b": 1,
+                            "a": 1
+                        },
+                        "dark": {
+                            "r": 0.0351,
+                            "g": 0.0351,
+                            "b": 0.0429,
+                            "a": 1
+                        }
+                    }
+                },
+                {
+                    "name": "colors/foreground",
+                    "type": "COLOR",
+                    "description": "Default text color.",
+                    "valuesByMode": {
+                        "light": {
+                            "r": 0.0351,
+                            "g": 0.0351,
+                            "b": 0.0429,
+                            "a": 1
+                        },
+                        "dark": {
+                            "r": 0.98,
+                            "g": 0.98,
+                            "b": 0.98,
+                            "a": 1
+                        }
+                    }
+                },
+                {
+                    "name": "colors/card",
+                    "type": "COLOR",
+                    "description": "Background color for cards",
+                    "valuesByMode": {
+                        "light": {
+                            "r": 1,
+                            "g": 1,
+                            "b": 1,
+                            "a": 1
+                        },
+                        "dark": {
+                            "r": 0.0351,
+                            "g": 0.0351,
+                            "b": 0.0429,
+                            "a": 1
+                        }
+                    }
+                },
+                {
+                    "name": "colors/card-foreground",
+                    "type": "COLOR",
+                    "description": "Text color for cards",
+                    "valuesByMode": {
+                        "light": {
+                            "r": 0.0351,
+                            "g": 0.0351,
+                            "b": 0.0429,
+                            "a": 1
+                        },
+                        "dark": {
+                            "r": 0.98,
+                            "g": 0.98,
+                            "b": 0.98,
+                            "a": 1
+                        }
+                    }
+                },
+                {
+                    "name": "colors/popover",
+                    "type": "COLOR",
+                    "description": "Background color for popovers such as dropdowns",
+                    "valuesByMode": {
+                        "light": {
+                            "r": 1,
+                            "g": 1,
+                            "b": 1,
+                            "a": 1
+                        },
+                        "dark": {
+                            "r": 0.0351,
+                            "g": 0.0351,
+                            "b": 0.0429,
+                            "a": 1
+                        }
+                    }
+                },
+                {
+                    "name": "colors/popover-foreground",
+                    "type": "COLOR",
+                    "description": "Text color for popovers",
+                    "valuesByMode": {
+                        "light": {
+                            "r": 0.0351,
+                            "g": 0.0351,
+                            "b": 0.0429,
+                            "a": 1
+                        },
+                        "dark": {
+                            "r": 0.98,
+                            "g": 0.98,
+                            "b": 0.98,
+                            "a": 1
+                        }
+                    }
+                },
+                {
+                    "name": "colors/primary",
+                    "type": "COLOR",
+                    "description": "Primary colors for <Button />",
+                    "valuesByMode": {
+                        "light": {
+                            "r": 0.0941,
+                            "g": 0.0941,
+                            "b": 0.1059,
+                            "a": 1
+                        },
+                        "dark": {
+                            "r": 0.98,
+                            "g": 0.98,
+                            "b": 0.98,
+                            "a": 1
+                        }
+                    }
+                },
+                {
+                    "name": "colors/primary-foreground",
+                    "type": "COLOR",
+                    "description": "Text color for primary buttons",
+                    "valuesByMode": {
+                        "light": {
+                            "r": 0.98,
+                            "g": 0.98,
+                            "b": 0.98,
+                            "a": 1
+                        },
+                        "dark": {
+                            "r": 0.0941,
+                            "g": 0.0941,
+                            "b": 0.1059,
+                            "a": 1
+                        }
+                    }
+                },
+                {
+                    "name": "colors/secondary",
+                    "type": "COLOR",
+                    "description": "Secondary colors for <Button />",
+                    "valuesByMode": {
+                        "light": {
+                            "r": 0.957,
+                            "g": 0.957,
+                            "b": 0.961,
+                            "a": 1
+                        },
+                        "dark": {
+                            "r": 0.1531,
+                            "g": 0.1531,
+                            "b": 0.1649,
+                            "a": 1
+                        }
+                    }
+                },
+                {
+                    "name": "colors/secondary-foreground",
+                    "type": "COLOR",
+                    "description": "Text color for secondary buttons",
+                    "valuesByMode": {
+                        "light": {
+                            "r": 0.0941,
+                            "g": 0.0941,
+                            "b": 0.1059,
+                            "a": 1
+                        },
+                        "dark": {
+                            "r": 0.98,
+                            "g": 0.98,
+                            "b": 0.98,
+                            "a": 1
+                        }
+                    }
+                },
+                {
+                    "name": "colors/muted",
+                    "type": "COLOR",
+                    "description": "Muted backgrounds such as <TabsList />",
+                    "valuesByMode": {
+                        "light": {
+                            "r": 0.957,
+                            "g": 0.957,
+                            "b": 0.961,
+                            "a": 1
+                        },
+                        "dark": {
+                            "r": 0.1531,
+                            "g": 0.1531,
+                            "b": 0.1649,
+                            "a": 1
+                        }
+                    }
+                },
+                {
+                    "name": "colors/muted-foreground",
+                    "type": "COLOR",
+                    "description": "Muted text colors",
+                    "valuesByMode": {
+                        "light": {
+                            "r": 0.4435,
+                            "g": 0.4435,
+                            "b": 0.4785,
+                            "a": 1
+                        },
+                        "dark": {
+                            "r": 0.6315,
+                            "g": 0.6315,
+                            "b": 0.6666,
+                            "a": 1
+                        }
+                    }
+                },
+                {
+                    "name": "colors/accent",
+                    "type": "COLOR",
+                    "description": "Used for accents such as hover effects",
+                    "valuesByMode": {
+                        "light": {
+                            "r": 0.957,
+                            "g": 0.957,
+                            "b": 0.961,
+                            "a": 1
+                        },
+                        "dark": {
+                            "r": 0.1531,
+                            "g": 0.1531,
+                            "b": 0.1649,
+                            "a": 1
+                        }
+                    }
+                },
+                {
+                    "name": "colors/accent-foreground",
+                    "type": "COLOR",
+                    "description": "Text color for accents",
+                    "valuesByMode": {
+                        "light": {
+                            "r": 0.0941,
+                            "g": 0.0941,
+                            "b": 0.1059,
+                            "a": 1
+                        },
+                        "dark": {
+                            "r": 0.98,
+                            "g": 0.98,
+                            "b": 0.98,
+                            "a": 1
+                        }
+                    }
+                },
+                {
+                    "name": "colors/destructive",
+                    "type": "COLOR",
+                    "description": "Used for destructive actions",
+                    "valuesByMode": {
+                        "light": {
+                            "r": 0.9371,
+                            "g": 0.2669,
+                            "b": 0.2669,
+                            "a": 1
+                        },
+                        "dark": {
+                            "r": 0.4982,
+                            "g": 0.1138,
+                            "b": 0.1138,
+                            "a": 1
+                        }
+                    }
+                },
+                {
+                    "name": "colors/destructive-foreground",
+                    "type": "COLOR",
+                    "description": "Text color for destructive actions",
+                    "valuesByMode": {
+                        "light": {
+                            "r": 0.98,
+                            "g": 0.98,
+                            "b": 0.98,
+                            "a": 1
+                        },
+                        "dark": {
+                            "r": 0.98,
+                            "g": 0.98,
+                            "b": 0.98,
+                            "a": 1
+                        }
+                    }
+                },
+                {
+                    "name": "colors/border",
+                    "type": "COLOR",
+                    "description": "Default border color",
+                    "valuesByMode": {
+                        "light": {
+                            "r": 0.8941,
+                            "g": 0.8941,
+                            "b": 0.9059,
+                            "a": 1
+                        },
+                        "dark": {
+                            "r": 0.1531,
+                            "g": 0.1531,
+                            "b": 0.1649,
+                            "a": 1
+                        }
+                    }
+                },
+                {
+                    "name": "colors/input",
+                    "type": "COLOR",
+                    "description": "Border color for inputs like <Input />",
+                    "valuesByMode": {
+                        "light": {
+                            "r": 0.8941,
+                            "g": 0.8941,
+                            "b": 0.9059,
+                            "a": 1
+                        },
+                        "dark": {
+                            "r": 0.1531,
+                            "g": 0.1531,
+                            "b": 0.1649,
+                            "a": 1
+                        }
+                    }
+                },
+                {
+                    "name": "colors/ring",
+                    "type": "COLOR",
+                    "description": "Focus ring color",
+                    "valuesByMode": {
+                        "light": {
+                            "r": 0.0941,
+                            "g": 0.0941,
+                            "b": 0.1059,
+                            "a": 1
+                        },
+                        "dark": {
+                            "r": 0.8311,
+                            "g": 0.8311,
+                            "b": 0.8469,
+                            "a": 1
+                        }
+                    }
+                },
+                {
+                    "name": "colors/brand",
+                    "type": "COLOR",
+                    "description": "Main brand color",
+                    "valuesByMode": {
+                        "light": {
+                            "r": 0.0941,
+                            "g": 0.0941,
+                            "b": 0.1059,
+                            "a": 1
+                        },
+                        "dark": {
+                            "r": 0.98,
+                            "g": 0.98,
+                            "b": 0.98,
+                            "a": 1
+                        }
+                    }
+                },
+                {
+                    "name": "colors/brand-foreground",
+                    "type": "COLOR",
+                    "description": "Text color for brand backgrounds",
+                    "valuesByMode": {
+                        "light": {
+                            "r": 0.98,
+                            "g": 0.98,
+                            "b": 0.98,
+                            "a": 1
+                        },
+                        "dark": {
+                            "r": 0.0941,
+                            "g": 0.0941,
+                            "b": 0.1059,
+                            "a": 1
+                        }
+                    }
+                },
+                {
+                    "name": "colors/success",
+                    "type": "COLOR",
+                    "description": "Success state color",
+                    "valuesByMode": {
+                        "light": {
+                            "r": 0.0864,
+                            "g": 0.6396,
+                            "b": 0.2902,
+                            "a": 1
+                        },
+                        "dark": {
+                            "r": 0.1332,
+                            "g": 0.7728,
+                            "b": 0.3688,
+                            "a": 1
+                        }
+                    }
+                },
+                {
+                    "name": "colors/success-foreground",
+                    "type": "COLOR",
+                    "description": "Text color for success states",
+                    "valuesByMode": {
+                        "light": {
+                            "r": 1,
+                            "g": 0.946,
+                            "b": 0.9499,
+                            "a": 1
+                        },
+                        "dark": {
+                            "r": 0.0196,
+                            "g": 0.1804,
+                            "b": 0.0863,
+                            "a": 1
+                        }
+                    }
+                },
+                {
+                    "name": "colors/warning",
+                    "type": "COLOR",
+                    "description": "Warning state color",
+                    "valuesByMode": {
+                        "light": {
+                            "r": 0.9803,
+                            "g": 0.7991,
+                            "b": 0.0817,
+                            "a": 1
+                        },
+                        "dark": {
+                            "r": 0.9803,
+                            "g": 0.7991,
+                            "b": 0.0817,
+                            "a": 1
+                        }
+                    }
+                },
+                {
+                    "name": "colors/warning-foreground",
+                    "type": "COLOR",
+                    "description": "Text color for warning states",
+                    "valuesByMode": {
+                        "light": {
+                            "r": 0.2585,
+                            "g": 0.1253,
+                            "b": 0.0235,
+                            "a": 1
+                        },
+                        "dark": {
+                            "r": 0.2585,
+                            "g": 0.1253,
+                            "b": 0.0235,
+                            "a": 1
+                        }
+                    }
+                },
+                {
+                    "name": "colors/info",
+                    "type": "COLOR",
+                    "description": "Informational state color",
+                    "valuesByMode": {
+                        "light": {
+                            "r": 0.1445,
+                            "g": 0.3879,
+                            "b": 0.9215,
+                            "a": 1
+                        },
+                        "dark": {
+                            "r": 0.2314,
+                            "g": 0.51,
+                            "b": 0.9646,
+                            "a": 1
+                        }
+                    }
+                },
+                {
+                    "name": "colors/info-foreground",
+                    "type": "COLOR",
+                    "description": "Text color for info states",
+                    "valuesByMode": {
+                        "light": {
+                            "r": 0.972,
+                            "g": 0.98,
+                            "b": 0.988,
+                            "a": 1
+                        },
+                        "dark": {
+                            "r": 0.0589,
+                            "g": 0.0904,
+                            "b": 0.1651,
+                            "a": 1
+                        }
+                    }
+                },
+                {
+                    "name": "colors/surface-1",
+                    "type": "COLOR",
+                    "description": "Layer 1 surface",
+                    "valuesByMode": {
+                        "light": {
+                            "r": 1,
+                            "g": 1,
+                            "b": 1,
+                            "a": 1
+                        },
+                        "dark": {
+                            "r": 0.0351,
+                            "g": 0.0351,
+                            "b": 0.0429,
+                            "a": 1
+                        }
+                    }
+                },
+                {
+                    "name": "colors/surface-2",
+                    "type": "COLOR",
+                    "description": "Layer 2 surface",
+                    "valuesByMode": {
+                        "light": {
+                            "r": 0.957,
+                            "g": 0.957,
+                            "b": 0.961,
+                            "a": 1
+                        },
+                        "dark": {
+                            "r": 0.1531,
+                            "g": 0.1531,
+                            "b": 0.1649,
+                            "a": 1
+                        }
+                    }
+                },
+                {
+                    "name": "colors/surface-3",
+                    "type": "COLOR",
+                    "description": "Layer 3 surface",
+                    "valuesByMode": {
+                        "light": {
+                            "r": 0.8941,
+                            "g": 0.8941,
+                            "b": 0.9059,
+                            "a": 1
+                        },
+                        "dark": {
+                            "r": 0.192,
+                            "g": 0.192,
+                            "b": 0.208,
+                            "a": 1
+                        }
+                    }
+                },
+                {
+                    "name": "colors/chart-1",
+                    "type": "COLOR",
+                    "description": "Chart color 1",
+                    "valuesByMode": {
+                        "light": {
+                            "r": 0.9064,
+                            "g": 0.4322,
+                            "b": 0.3136,
+                            "a": 1
+                        },
+                        "dark": {
+                            "r": 0.15,
+                            "g": 0.3833,
+                            "b": 0.85,
+                            "a": 1
+                        }
+                    }
+                },
+                {
+                    "name": "colors/chart-2",
+                    "type": "COLOR",
+                    "description": "Chart color 2",
+                    "valuesByMode": {
+                        "light": {
+                            "r": 0.1638,
+                            "g": 0.6162,
+                            "b": 0.5634,
+                            "a": 1
+                        },
+                        "dark": {
+                            "r": 0.18,
+                            "g": 0.72,
+                            "b": 0.54,
+                            "a": 1
+                        }
+                    }
+                },
+                {
+                    "name": "colors/chart-3",
+                    "type": "COLOR",
+                    "description": "Chart color 3",
+                    "valuesByMode": {
+                        "light": {
+                            "r": 0.1512,
+                            "g": 0.2785,
+                            "b": 0.3288,
+                            "a": 1
+                        },
+                        "dark": {
+                            "r": 0.91,
+                            "g": 0.55,
+                            "b": 0.19,
+                            "a": 1
+                        }
+                    }
+                },
+                {
+                    "name": "colors/chart-4",
+                    "type": "COLOR",
+                    "description": "Chart color 4",
+                    "valuesByMode": {
+                        "light": {
+                            "r": 0.9116,
+                            "g": 0.769,
+                            "b": 0.4084,
+                            "a": 1
+                        },
+                        "dark": {
+                            "r": 0.6867,
+                            "g": 0.34,
+                            "b": 0.86,
+                            "a": 1
+                        }
+                    }
+                },
+                {
+                    "name": "colors/chart-5",
+                    "type": "COLOR",
+                    "description": "Chart color 5",
+                    "valuesByMode": {
+                        "light": {
+                            "r": 0.9571,
+                            "g": 0.6413,
+                            "b": 0.3829,
+                            "a": 1
+                        },
+                        "dark": {
+                            "r": 0.8875,
+                            "g": 0.2125,
+                            "b": 0.4375,
+                            "a": 1
+                        }
+                    }
+                },
+                {
+                    "name": "radius/radius",
+                    "type": "FLOAT",
+                    "description": "Base border radius",
+                    "valuesByMode": {
+                        "light": 8,
+                        "dark": 8
+                    }
+                },
+                {
+                    "name": "radius/radius-sm",
+                    "type": "FLOAT",
+                    "description": "Small border radius",
+                    "valuesByMode": {
+                        "light": "calc(var(--radius) - 2px)",
+                        "dark": "calc(var(--radius) - 2px)"
+                    }
+                },
+                {
+                    "name": "radius/radius-md",
+                    "type": "FLOAT",
+                    "description": "Medium border radius",
+                    "valuesByMode": {
+                        "light": "calc(var(--radius) - 4px)",
+                        "dark": "calc(var(--radius) - 4px)"
+                    }
+                },
+                {
+                    "name": "radius/radius-lg",
+                    "type": "FLOAT",
+                    "description": "Large border radius",
+                    "valuesByMode": {
+                        "light": "var(--radius)",
+                        "dark": "var(--radius)"
+                    }
+                },
+                {
+                    "name": "radius/radius-xl",
+                    "type": "FLOAT",
+                    "description": "Extra large border radius",
+                    "valuesByMode": {
+                        "light": "calc(var(--radius) + 4px)",
+                        "dark": "calc(var(--radius) + 4px)"
+                    }
+                },
+                {
+                    "name": "radius/radius-full",
+                    "type": "FLOAT",
+                    "description": "Full (pill) border radius",
+                    "valuesByMode": {
+                        "light": 9999,
+                        "dark": 9999
+                    }
+                },
+                {
+                    "name": "typography/font-sans",
+                    "type": "STRING",
+                    "description": "Base sans-serif font family",
+                    "valuesByMode": {
+                        "light": "Inter, sans-serif",
+                        "dark": "Inter, sans-serif"
+                    }
+                },
+                {
+                    "name": "typography/font-mono",
+                    "type": "STRING",
+                    "description": "Monospace font family",
+                    "valuesByMode": {
+                        "light": "Roboto Mono, monospace",
+                        "dark": "Roboto Mono, monospace"
+                    }
+                },
+                {
+                    "name": "typography/text-xs",
+                    "type": "FLOAT",
+                    "description": "Extra small font size",
+                    "valuesByMode": {
+                        "light": 12,
+                        "dark": 12
+                    }
+                },
+                {
+                    "name": "typography/text-sm",
+                    "type": "FLOAT",
+                    "description": "Small font size",
+                    "valuesByMode": {
+                        "light": 14,
+                        "dark": 14
+                    }
+                },
+                {
+                    "name": "typography/text-base",
+                    "type": "FLOAT",
+                    "description": "Base font size",
+                    "valuesByMode": {
+                        "light": 16,
+                        "dark": 16
+                    }
+                },
+                {
+                    "name": "typography/text-lg",
+                    "type": "FLOAT",
+                    "description": "Large font size",
+                    "valuesByMode": {
+                        "light": 18,
+                        "dark": 18
+                    }
+                },
+                {
+                    "name": "typography/text-xl",
+                    "type": "FLOAT",
+                    "description": "Extra large font size",
+                    "valuesByMode": {
+                        "light": 20,
+                        "dark": 20
+                    }
+                },
+                {
+                    "name": "typography/text-2xl",
+                    "type": "FLOAT",
+                    "description": "2XL font size",
+                    "valuesByMode": {
+                        "light": 24,
+                        "dark": 24
+                    }
+                },
+                {
+                    "name": "typography/text-3xl",
+                    "type": "FLOAT",
+                    "description": "3XL font size",
+                    "valuesByMode": {
+                        "light": 30,
+                        "dark": 30
+                    }
+                },
+                {
+                    "name": "typography/text-4xl",
+                    "type": "FLOAT",
+                    "description": "4XL font size",
+                    "valuesByMode": {
+                        "light": 36,
+                        "dark": 36
+                    }
+                },
+                {
+                    "name": "typography/font-weight-normal",
+                    "type": "STRING",
+                    "description": "Normal font weight",
+                    "valuesByMode": {
+                        "light": "400",
+                        "dark": "400"
+                    }
+                },
+                {
+                    "name": "typography/font-weight-medium",
+                    "type": "STRING",
+                    "description": "Medium font weight",
+                    "valuesByMode": {
+                        "light": "500",
+                        "dark": "500"
+                    }
+                },
+                {
+                    "name": "typography/font-weight-semibold",
+                    "type": "STRING",
+                    "description": "Semibold font weight",
+                    "valuesByMode": {
+                        "light": "600",
+                        "dark": "600"
+                    }
+                },
+                {
+                    "name": "typography/font-weight-bold",
+                    "type": "STRING",
+                    "description": "Bold font weight",
+                    "valuesByMode": {
+                        "light": "700",
+                        "dark": "700"
+                    }
+                },
+                {
+                    "name": "typography/tracking-tighter",
+                    "type": "FLOAT",
+                    "description": "Tighter letter spacing",
+                    "valuesByMode": {
+                        "light": -0.05,
+                        "dark": -0.05
+                    }
+                },
+                {
+                    "name": "typography/tracking-tight",
+                    "type": "FLOAT",
+                    "description": "Tight letter spacing",
+                    "valuesByMode": {
+                        "light": -0.025,
+                        "dark": -0.025
+                    }
+                },
+                {
+                    "name": "typography/tracking-normal",
+                    "type": "FLOAT",
+                    "description": "Normal letter spacing",
+                    "valuesByMode": {
+                        "light": 0,
+                        "dark": 0
+                    }
+                },
+                {
+                    "name": "typography/tracking-wide",
+                    "type": "FLOAT",
+                    "description": "Wide letter spacing",
+                    "valuesByMode": {
+                        "light": 0.025,
+                        "dark": 0.025
+                    }
+                },
+                {
+                    "name": "typography/tracking-wider",
+                    "type": "FLOAT",
+                    "description": "Wider letter spacing",
+                    "valuesByMode": {
+                        "light": 0.05,
+                        "dark": 0.05
+                    }
+                },
+                {
+                    "name": "typography/tracking-widest",
+                    "type": "FLOAT",
+                    "description": "Widest letter spacing",
+                    "valuesByMode": {
+                        "light": 0.1,
+                        "dark": 0.1
+                    }
+                },
+                {
+                    "name": "typography/leading-none",
+                    "type": "FLOAT",
+                    "description": "Line height 1",
+                    "valuesByMode": {
+                        "light": 1,
+                        "dark": 1
+                    }
+                },
+                {
+                    "name": "typography/leading-tight",
+                    "type": "FLOAT",
+                    "description": "Tight line height",
+                    "valuesByMode": {
+                        "light": 1.25,
+                        "dark": 1.25
+                    }
+                },
+                {
+                    "name": "typography/leading-snug",
+                    "type": "FLOAT",
+                    "description": "Snug line height",
+                    "valuesByMode": {
+                        "light": 1.375,
+                        "dark": 1.375
+                    }
+                },
+                {
+                    "name": "typography/leading-normal",
+                    "type": "FLOAT",
+                    "description": "Normal line height",
+                    "valuesByMode": {
+                        "light": 1.5,
+                        "dark": 1.5
+                    }
+                },
+                {
+                    "name": "typography/leading-relaxed",
+                    "type": "FLOAT",
+                    "description": "Relaxed line height",
+                    "valuesByMode": {
+                        "light": 1.625,
+                        "dark": 1.625
+                    }
+                },
+                {
+                    "name": "typography/leading-loose",
+                    "type": "FLOAT",
+                    "description": "Loose line height",
+                    "valuesByMode": {
+                        "light": 2,
+                        "dark": 2
+                    }
+                },
+                {
+                    "name": "shadows/shadow-xs",
+                    "type": "STRING",
+                    "description": "Extra small shadow",
+                    "valuesByMode": {
+                        "light": "0 1px 2px 0 rgb(0 0 0 / 0.05)",
+                        "dark": "0 1px 2px 0 rgb(0 0 0 / 0.05)"
+                    }
+                },
+                {
+                    "name": "shadows/shadow-sm",
+                    "type": "STRING",
+                    "description": "Small shadow",
+                    "valuesByMode": {
+                        "light": "0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)",
+                        "dark": "0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)"
+                    }
+                },
+                {
+                    "name": "shadows/shadow-md",
+                    "type": "STRING",
+                    "description": "Medium shadow",
+                    "valuesByMode": {
+                        "light": "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
+                        "dark": "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)"
+                    }
+                },
+                {
+                    "name": "shadows/shadow-lg",
+                    "type": "STRING",
+                    "description": "Large shadow",
+                    "valuesByMode": {
+                        "light": "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)",
+                        "dark": "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)"
+                    }
+                },
+                {
+                    "name": "shadows/shadow-xl",
+                    "type": "STRING",
+                    "description": "Extra large shadow",
+                    "valuesByMode": {
+                        "light": "0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)",
+                        "dark": "0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)"
+                    }
+                },
+                {
+                    "name": "spacing/spacing-1",
+                    "type": "FLOAT",
+                    "description": "0.25rem spacing",
+                    "valuesByMode": {
+                        "light": 4,
+                        "dark": 4
+                    }
+                },
+                {
+                    "name": "spacing/spacing-2",
+                    "type": "FLOAT",
+                    "description": "0.5rem spacing",
+                    "valuesByMode": {
+                        "light": 8,
+                        "dark": 8
+                    }
+                },
+                {
+                    "name": "spacing/spacing-3",
+                    "type": "FLOAT",
+                    "description": "0.75rem spacing",
+                    "valuesByMode": {
+                        "light": 12,
+                        "dark": 12
+                    }
+                },
+                {
+                    "name": "spacing/spacing-4",
+                    "type": "FLOAT",
+                    "description": "1rem spacing",
+                    "valuesByMode": {
+                        "light": 16,
+                        "dark": 16
+                    }
+                },
+                {
+                    "name": "spacing/spacing-5",
+                    "type": "FLOAT",
+                    "description": "1.25rem spacing",
+                    "valuesByMode": {
+                        "light": 20,
+                        "dark": 20
+                    }
+                },
+                {
+                    "name": "spacing/spacing-6",
+                    "type": "FLOAT",
+                    "description": "1.5rem spacing",
+                    "valuesByMode": {
+                        "light": 24,
+                        "dark": 24
+                    }
+                },
+                {
+                    "name": "spacing/spacing-8",
+                    "type": "FLOAT",
+                    "description": "2rem spacing",
+                    "valuesByMode": {
+                        "light": 32,
+                        "dark": 32
+                    }
+                },
+                {
+                    "name": "spacing/spacing-10",
+                    "type": "FLOAT",
+                    "description": "2.5rem spacing",
+                    "valuesByMode": {
+                        "light": 40,
+                        "dark": 40
+                    }
+                },
+                {
+                    "name": "spacing/spacing-12",
+                    "type": "FLOAT",
+                    "description": "3rem spacing",
+                    "valuesByMode": {
+                        "light": 48,
+                        "dark": 48
+                    }
+                },
+                {
+                    "name": "spacing/spacing-16",
+                    "type": "FLOAT",
+                    "description": "4rem spacing",
+                    "valuesByMode": {
+                        "light": 64,
+                        "dark": 64
+                    }
+                }
+            ]
+        }
+    ]
+}
