@@ -1,6 +1,7 @@
 import { ThemeTokens, CustomToken, TokenValue, TokenGroup, TokenType } from "../tokens/schema";
 import { hslToRgbFloat, isHSLValue, remToPx } from "../colorUtils";
 import { TOKEN_DEFINITIONS } from "../tokens/defaults";
+import { buildPrimitivesCollection } from "../tokens/tailwindPrimitives";
 
 const GROUP_FOLDERS: Record<TokenGroup, string> = {
   "semantic-colors": "colors",
@@ -17,21 +18,21 @@ function formatFigmaValue(type: TokenType, value: TokenValue): unknown {
     return hslToRgbFloat(value);
   }
 
-  if (type === "radius" || type === "spacing" || type === "fontSize" || type === "lineHeight") {
-    // Treat as FLOAT
+  if (type === "radius" || type === "spacing" || type === "fontSize" || type === "lineHeight" || type === "fontWeight") {
     if (typeof value === "string" && value.includes("rem")) {
-       return remToPx(value);
+      return remToPx(value);
     }
     const num = parseFloat(String(value));
-    return isNaN(num) ? value : num;
+    // Unparseable (e.g. calc() expressions) — fall through to STRING
+    if (!isNaN(num)) return num;
   }
 
   return String(value);
 }
 
-function getFigmaType(type: TokenType): string {
+function resolveFigmaType(type: TokenType, formattedValue: unknown): string {
   if (type === "color") return "COLOR";
-  if (type === "radius" || type === "spacing" || type === "fontSize" || type === "lineHeight") return "FLOAT";
+  if (typeof formattedValue === "number") return "FLOAT";
   return "STRING";
 }
 
@@ -45,17 +46,19 @@ export function exportToFigma(tokens: ThemeTokens, customTokens: CustomToken[]):
 
     if (lightVal === undefined && darkVal === undefined) continue;
 
-    // Simple strip of `--` for pure name. 
-    // e.g. "--primary-foreground" -> "primary-foreground"
     const cleanName = def.cssVar.replace(/^--/, "");
     const folder = GROUP_FOLDERS[def.group] || "misc";
 
     const lightFigmaVal = lightVal !== undefined ? formatFigmaValue(def.type, lightVal) : undefined;
     const darkFigmaVal = darkVal !== undefined ? formatFigmaValue(def.type, darkVal) : lightFigmaVal;
 
+    // Derive the Figma type from the actual formatted value so calc() strings
+    // don't produce a FLOAT variable with a string value.
+    const figmaType = resolveFigmaType(def.type, lightFigmaVal ?? darkFigmaVal);
+
     variables.push({
       name: `${folder}/${cleanName}`,
-      type: getFigmaType(def.type),
+      type: figmaType,
       description: def.description,
       valuesByMode: {
         light: lightFigmaVal,
@@ -66,6 +69,7 @@ export function exportToFigma(tokens: ThemeTokens, customTokens: CustomToken[]):
 
   return JSON.stringify({
     collections: [
+      buildPrimitivesCollection(),
       {
         name: "Theme Studio",
         modes: ["light", "dark"],

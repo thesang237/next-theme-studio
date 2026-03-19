@@ -4,6 +4,7 @@ import * as React from "react";
 import * as SliderPrimitive from "@radix-ui/react-slider";
 import { Input } from "@/components/ui/input";
 import { Token } from "@/lib/tokens/schema";
+import { PrimitivePicker } from "./PrimitivePicker";
 
 interface ScalarTokenEditorProps {
   token: Token;
@@ -86,6 +87,7 @@ export function ScalarTokenEditor({ token, value, onChange }: ScalarTokenEditorP
 
   return (
     <div className="flex items-center gap-2">
+      <PrimitivePicker tokenType={token.type} onSelect={onChange} />
       {showSlider && (
         <SliderPrimitive.Root
           className="relative flex w-24 touch-none select-none items-center"
