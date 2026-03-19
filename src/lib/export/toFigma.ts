@@ -2,6 +2,7 @@ import { ThemeTokens, CustomToken, TokenValue, TokenGroup, TokenType } from "../
 import { hslToRgbFloat, isHSLValue, remToPx } from "../colorUtils";
 import { TOKEN_DEFINITIONS } from "../tokens/defaults";
 import { buildPrimitivesCollection } from "../tokens/tailwindPrimitives";
+import { buildColorsCollection } from "../tokens/tailwindColors";
 
 const GROUP_FOLDERS: Record<TokenGroup, string> = {
   "semantic-colors": "colors",
@@ -69,6 +70,7 @@ export function exportToFigma(tokens: ThemeTokens, customTokens: CustomToken[]):
 
   return JSON.stringify({
     collections: [
+      buildColorsCollection(),
       buildPrimitivesCollection(),
       {
         name: "Theme Studio",
