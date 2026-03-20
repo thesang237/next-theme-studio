@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import * as SliderPrimitive from "@radix-ui/react-slider";
+import { Copy, Check } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -9,6 +10,39 @@ import { Token, HSLValue } from "@/lib/tokens/schema";
 import { hslToHex, hexToHsl, hslToCssString } from "@/lib/colorUtils";
 import { TAILWIND_COLORS, SHADE_NAMES, COLOR_NAMES } from "@/lib/tokens/tailwindColors";
 import { cn } from "@/lib/utils";
+
+function hexToRgbString(hex: string): string {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return `rgb(${r}, ${g}, ${b})`;
+}
+
+interface CopyBtnProps {
+  label: string;
+  text: string;
+  copiedFormat: string | null;
+  onCopy: (text: string, format: string) => void;
+}
+
+function CopyBtn({ label, text, copiedFormat, onCopy }: CopyBtnProps) {
+  const isCopied = copiedFormat === label;
+  return (
+    <button
+      onClick={() => onCopy(text, label)}
+      title={text}
+      className={cn(
+        "flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] font-mono border transition-colors",
+        isCopied
+          ? "border-green-500/50 bg-green-500/10 text-green-600 dark:text-green-400"
+          : "border-border bg-card text-muted-foreground hover:text-foreground hover:bg-accent"
+      )}
+    >
+      {isCopied ? <Check className="h-2.5 w-2.5" /> : <Copy className="h-2.5 w-2.5" />}
+      {label}
+    </button>
+  );
+}
 
 interface ColorTokenEditorProps {
   token: Token;
@@ -18,20 +52,64 @@ interface ColorTokenEditorProps {
 
 type EditorTab = "custom" | "tailwind";
 
+interface TWSelection {
+  colorName: string;
+  shade: string;
+  hex: string;
+}
+
 export function ColorTokenEditor({ token, value, onChange }: ColorTokenEditorProps) {
   const [isOpen, setIsOpen] = React.useState(false);
   const [tab, setTab] = React.useState<EditorTab>("custom");
   const [localValue, setLocalValue] = React.useState<HSLValue>(value);
   const [hexInput, setHexInput] = React.useState(hslToHex(value));
   const [isValidHex, setIsValidHex] = React.useState(true);
+  const [selectedTW, setSelectedTW] = React.useState<TWSelection | null>(null);
+  const [copiedFormat, setCopiedFormat] = React.useState<string | null>(null);
   const isDragging = React.useRef(false);
 
+  // Sync external value changes
   React.useEffect(() => {
     if (!isDragging.current) {
       setLocalValue(value);
       setHexInput(hslToHex(value));
     }
   }, [value]);
+
+  // Auto-detect active TW color when popover opens
+  React.useEffect(() => {
+    if (!isOpen) return;
+    const currentHex = hslToHex(value).slice(0, 7).toLowerCase();
+    for (const colorName of COLOR_NAMES) {
+      const scale = TAILWIND_COLORS[colorName];
+      for (const shade of SHADE_NAMES) {
+        if (scale[shade].toLowerCase() === currentHex) {
+          setSelectedTW({ colorName, shade, hex: scale[shade] });
+          return;
+        }
+      }
+    }
+    setSelectedTW(null);
+  }, [isOpen, value]);
+
+  const copyToClipboard = async (text: string, format: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedFormat(format);
+      setTimeout(() => setCopiedFormat(null), 1500);
+    } catch (e) {
+      console.error("Failed to copy", e);
+    }
+  };
+
+  // Derive copy format values from current color
+  const currentHex6 = hslToHex(localValue).slice(0, 7);
+  const copyFormats = [
+    { label: "HEX", value: currentHex6 },
+    { label: "RGB", value: hexToRgbString(currentHex6) },
+    { label: "HSL", value: `hsl(${Math.round(localValue.h)}, ${Math.round(localValue.s)}%, ${Math.round(localValue.l)}%)` },
+    { label: "Token", value: hslToCssString(localValue) },
+  ];
 
   const updateColor = (updates: Partial<HSLValue>) => {
     const nextValue = { ...localValue, ...updates };
@@ -61,13 +139,13 @@ export function ColorTokenEditor({ token, value, onChange }: ColorTokenEditorPro
     }
   };
 
-  const applyHex = (hex: string) => {
+  const handleTWSelect = (colorName: string, shade: string, hex: string) => {
     const hsl = hexToHsl(hex);
     if (typeof localValue.a === "number") hsl.a = localValue.a;
     setLocalValue(hsl);
     setHexInput(hex);
     onChange(hsl);
-    setIsOpen(false);
+    setSelectedTW({ colorName, shade, hex });
   };
 
   const hasAlpha = typeof localValue.a === "number";
@@ -91,7 +169,7 @@ export function ColorTokenEditor({ token, value, onChange }: ColorTokenEditorPro
           />
         }
       />
-      <PopoverContent className="w-[260px] bg-background border-border p-0 text-xs shadow-xl" align="end" sideOffset={8}>
+      <PopoverContent className="w-[268px] bg-background border-border p-0 text-xs shadow-xl" align="end" sideOffset={8}>
         {/* Tab bar */}
         <div className="flex border-b border-border px-1 pt-1 gap-0.5">
           <button
@@ -187,49 +265,104 @@ export function ColorTokenEditor({ token, value, onChange }: ColorTokenEditorPro
                 </div>
               )}
             </div>
-            {/* Hex */}
-            <div className="flex items-center gap-2 pt-2 border-t border-border">
-              <span className="text-muted-foreground font-mono w-8">Hex</span>
-              <Input
-                value={hexInput}
-                onChange={handleHexChange}
-                onBlur={handleHexBlur}
-                className={cn(
-                  "h-7 text-xs font-mono bg-card border-border focus-visible:ring-1 focus-visible:ring-ring",
-                  !isValidHex && "border-red-500 focus-visible:ring-red-500 text-red-400"
-                )}
-                maxLength={7}
-              />
+            {/* Hex input + copy buttons */}
+            <div className="flex flex-col gap-2 pt-2 border-t border-border">
+              <div className="flex items-center gap-2">
+                <span className="text-muted-foreground font-mono w-8">Hex</span>
+                <Input
+                  value={hexInput}
+                  onChange={handleHexChange}
+                  onBlur={handleHexBlur}
+                  className={cn(
+                    "h-7 text-xs font-mono bg-card border-border focus-visible:ring-1 focus-visible:ring-ring",
+                    !isValidHex && "border-red-500 focus-visible:ring-red-500 text-red-400"
+                  )}
+                  maxLength={7}
+                />
+              </div>
+              <div className="flex gap-1 flex-wrap">
+                {copyFormats.map(({ label, value: fmtValue }) => (
+                  <CopyBtn
+                    key={label}
+                    label={label}
+                    text={fmtValue}
+                    copiedFormat={copiedFormat}
+                    onCopy={copyToClipboard}
+                  />
+                ))}
+              </div>
             </div>
           </div>
         )}
 
         {tab === "tailwind" && (
-          <ScrollArea className="h-[300px]">
-            <div className="p-2 flex flex-col gap-0.5">
-              {COLOR_NAMES.map((colorName) => {
-                const scale = TAILWIND_COLORS[colorName];
-                return (
-                  <div key={colorName} className="flex items-center gap-1.5">
-                    <span className="text-[10px] font-mono text-muted-foreground w-[52px] shrink-0 capitalize">
-                      {colorName}
-                    </span>
-                    <div className="flex flex-1 gap-px">
-                      {SHADE_NAMES.map((shade) => (
-                        <button
-                          key={shade}
-                          title={`${colorName}-${shade} ${scale[shade]}`}
-                          onClick={() => applyHex(scale[shade])}
-                          className="flex-1 h-5 rounded-[2px] hover:scale-110 hover:z-10 relative transition-transform"
-                          style={{ backgroundColor: scale[shade] }}
-                        />
-                      ))}
+          <>
+            <ScrollArea className="h-[280px]">
+              <div className="p-2 flex flex-col gap-0.5">
+                {COLOR_NAMES.map((colorName) => {
+                  const scale = TAILWIND_COLORS[colorName];
+                  return (
+                    <div key={colorName} className="flex items-center gap-1.5">
+                      <span className="text-[10px] font-mono text-muted-foreground w-[52px] shrink-0 capitalize">
+                        {colorName}
+                      </span>
+                      <div className="flex flex-1 gap-px">
+                        {SHADE_NAMES.map((shade) => {
+                          const isSelected =
+                            selectedTW?.colorName === colorName && selectedTW?.shade === shade;
+                          return (
+                            <button
+                              key={shade}
+                              title={`${colorName}-${shade}\n${scale[shade]}`}
+                              onClick={() => handleTWSelect(colorName, shade, scale[shade])}
+                              className={cn(
+                                "flex-1 h-5 rounded-[2px] relative transition-transform",
+                                isSelected
+                                  ? "ring-2 ring-white ring-offset-1 scale-[1.25] z-10"
+                                  : "hover:scale-110 hover:z-10"
+                              )}
+                              style={{ backgroundColor: scale[shade] }}
+                            />
+                          );
+                        })}
+                      </div>
                     </div>
+                  );
+                })}
+              </div>
+            </ScrollArea>
+
+            {/* Selected TW color info panel */}
+            {selectedTW && (
+              <div className="border-t border-border p-3 flex flex-col gap-2.5">
+                <div className="flex items-center gap-2.5">
+                  <div
+                    className="h-9 w-9 rounded-md border border-border shrink-0 shadow-sm"
+                    style={{ backgroundColor: selectedTW.hex }}
+                  />
+                  <div className="flex flex-col min-w-0">
+                    <span className="text-xs font-mono font-semibold capitalize">
+                      {selectedTW.colorName}-{selectedTW.shade}
+                    </span>
+                    <span className="text-[10px] font-mono text-muted-foreground">
+                      {selectedTW.hex}
+                    </span>
                   </div>
-                );
-              })}
-            </div>
-          </ScrollArea>
+                </div>
+                <div className="flex gap-1 flex-wrap">
+                  {copyFormats.map(({ label, value: fmtValue }) => (
+                    <CopyBtn
+                      key={label}
+                      label={label}
+                      text={fmtValue}
+                      copiedFormat={copiedFormat}
+                      onCopy={copyToClipboard}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+          </>
         )}
       </PopoverContent>
     </Popover>

@@ -21,6 +21,7 @@ export type TokenType =
 export type TokenGroup =
   | "semantic-colors"
   | "extended-palette"
+  | "sidebar"
   | "radius"
   | "typography"
   | "shadows"

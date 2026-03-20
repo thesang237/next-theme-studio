@@ -7,6 +7,7 @@ import { buildColorsCollection } from "../tokens/tailwindColors";
 const GROUP_FOLDERS: Record<TokenGroup, string> = {
   "semantic-colors": "colors",
   "extended-palette": "colors",
+  sidebar: "colors",
   radius: "radius",
   shadows: "shadows",
   spacing: "spacing",

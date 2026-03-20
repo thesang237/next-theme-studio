@@ -26,6 +26,14 @@ export const TOKEN_GROUPS: Array<{
     tokens: TOKEN_DEFINITIONS.filter((t) => t.group === "extended-palette"),
   },
   {
+    id: "sidebar",
+    label: "Sidebar",
+    description: "Navigation sidebar surface, active state, accent, border, and ring colors.",
+    icon: "PanelLeft",
+    defaultOpen: false,
+    tokens: TOKEN_DEFINITIONS.filter((t) => t.group === "sidebar"),
+  },
+  {
     id: "radius",
     label: "Radius",
     description: "Border radiuses applying to cards, popovers, buttons, etc.",

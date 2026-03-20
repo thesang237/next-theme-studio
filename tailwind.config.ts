@@ -65,6 +65,12 @@ const config = {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+        // Tailwind v4 value used by shadcn components
+        "4xl": "2rem",
+      },
+      ringWidth: {
+        // Tailwind v4 value used by shadcn components (focus rings)
+        "3": "3px",
       },
       keyframes: {
         "accordion-down": {
