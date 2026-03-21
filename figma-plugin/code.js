@@ -10,6 +10,18 @@ figma.ui.onmessage = function (msg) {
       throw new Error('Invalid format: expected a "collections" array at root.');
     }
 
+    // Registry: "CollectionName/variableName" → Variable object
+    // Built as we create variables so later collections can alias earlier ones.
+    var variableRegistry = {};
+
+    function isAlias(value) {
+      return value !== null &&
+        typeof value === "object" &&
+        typeof value.collection === "string" &&
+        typeof value.name === "string" &&
+        !("r" in value);
+    }
+
     var results = [];
 
     for (var c = 0; c < data.collections.length; c++) {
@@ -19,10 +31,8 @@ figma.ui.onmessage = function (msg) {
         throw new Error('Collection "' + (col.name || "?") + '" is missing name, modes, or variables.');
       }
 
-      // Create collection — Figma always starts with one default mode
       var collection = figma.variables.createVariableCollection(col.name);
 
-      // Map mode name → modeId
       var modeIds = {};
       collection.renameMode(collection.modes[0].modeId, col.modes[0]);
       modeIds[col.modes[0]] = collection.modes[0].modeId;
@@ -49,6 +59,9 @@ figma.ui.onmessage = function (msg) {
             variable.description = def.description;
           }
 
+          // Register so later collections can alias this variable
+          variableRegistry[col.name + "/" + def.name] = variable;
+
           var modeNames = Object.keys(def.valuesByMode);
           for (var k = 0; k < modeNames.length; k++) {
             var modeName = modeNames[k];
@@ -57,8 +70,18 @@ figma.ui.onmessage = function (msg) {
 
             var value = def.valuesByMode[modeName];
 
-            // Coerce numeric strings to float for FLOAT variables.
-            // If the string can't be parsed (e.g. calc() expressions), skip this mode value.
+            // Resolve alias: { collection, name } → VariableAlias
+            if (isAlias(value)) {
+              var registryKey = value.collection + "/" + value.name;
+              var targetVar = variableRegistry[registryKey];
+              if (!targetVar) {
+                // Target not created yet or doesn't exist — skip this mode value
+                continue;
+              }
+              value = figma.variables.createVariableAlias(targetVar);
+            }
+
+            // Coerce numeric strings to float for FLOAT variables
             if (def.type === "FLOAT" && typeof value === "string") {
               var parsed = parseFloat(value);
               if (isNaN(parsed)) continue;
@@ -70,7 +93,6 @@ figma.ui.onmessage = function (msg) {
 
           created++;
         } catch (varErr) {
-          // One bad variable must not stop the rest
           skipped++;
         }
       }

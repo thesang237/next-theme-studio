@@ -1,8 +1,19 @@
 import { ThemeTokens, CustomToken, TokenValue, TokenGroup, TokenType } from "../tokens/schema";
-import { hslToRgbFloat, isHSLValue, remToPx } from "../colorUtils";
+import { hslToHex, hslToRgbFloat, isHSLValue, remToPx } from "../colorUtils";
 import { TOKEN_DEFINITIONS } from "../tokens/defaults";
 import { buildPrimitivesCollection } from "../tokens/tailwindPrimitives";
-import { buildColorsCollection } from "../tokens/tailwindColors";
+import { buildColorsCollection, TAILWIND_COLORS, SHADE_NAMES } from "../tokens/tailwindColors";
+
+// Reverse lookup: "#rrggbb" → { collection, name } for every Tailwind palette entry
+const HEX_TO_TAILWIND = new Map<string, { collection: string; name: string }>();
+for (const [colorName, scale] of Object.entries(TAILWIND_COLORS)) {
+  for (const shade of SHADE_NAMES) {
+    HEX_TO_TAILWIND.set(scale[shade].toLowerCase(), {
+      collection: "TailwindCSS Colors",
+      name: `${colorName}/${shade}`,
+    });
+  }
+}
 
 const GROUP_FOLDERS: Record<TokenGroup, string> = {
   "semantic-colors": "colors",
@@ -17,7 +28,16 @@ const GROUP_FOLDERS: Record<TokenGroup, string> = {
 
 function formatFigmaValue(type: TokenType, value: TokenValue): unknown {
   if (type === "color" && isHSLValue(value)) {
+    if (value.a === undefined) {
+      const hex = hslToHex(value).toLowerCase();
+      const alias = HEX_TO_TAILWIND.get(hex);
+      if (alias) return alias;
+    }
     return hslToRgbFloat(value);
+  }
+
+  if (type === "fontFamily" && typeof value === "string") {
+    return value.split(",")[0].trim();
   }
 
   if (type === "radius" || type === "spacing" || type === "fontSize" || type === "lineHeight" || type === "fontWeight") {

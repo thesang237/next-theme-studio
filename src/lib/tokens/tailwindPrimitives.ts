@@ -46,9 +46,11 @@ function toFigmaType(w3c: string): "FLOAT" | "COLOR" | "STRING" {
   return "STRING";
 }
 
+const EXCLUDED_GROUPS = new Set(["tailwind colors", "$extensions"]);
+
 export const TAILWIND_PRIMITIVE_GROUPS: TailwindPrimitiveGroup[] = (() => {
   const data = rawData as unknown as W3CFile;
-  return Object.entries(data).map(([groupId, group]) => {
+  return Object.entries(data).filter(([groupId]) => !EXCLUDED_GROUPS.has(groupId)).map(([groupId, group]) => {
     const entries = Object.entries(group);
     return {
       id: groupId,
