@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: Inter, -apple-system, sans-serif;
+    font-size: 12px;
+    background: #2c2c2c;
+    color: #e5e5e5;
+    padding: 16px;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  /* ── Section labels ── */
+  .section-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #71717a;
+    margin-bottom: 6px;
+  }
+
+  /* ── JSON textarea ── */
+  textarea {
+    width: 100%;
+    height: 110px;
+    background: #1e1e1e;
+    border: 1px solid #3d3d3d;
+    border-radius: 4px;
+    color: #e5e5e5;
+    font-family: "Roboto Mono", "Fira Code", monospace;
+    font-size: 11px;
+    line-height: 1.5;
+    padding: 10px;
+    resize: none;
+    outline: none;
+    transition: border-color 0.15s;
+    flex-shrink: 0;
+  }
+  textarea:focus { border-color: #7b61ff; }
+  textarea::placeholder { color: #555; }
+
+  /* ── Component checklist ── */
+  .comp-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+
+  .comp-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.1s;
+  }
+  .comp-item:hover { background: #333; }
+
+  .cb {
+    width: 15px; height: 15px;
+    border: 1.5px solid #4a4a4a;
+    border-radius: 3px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.1s;
+  }
+  .cb.on { background: #7b61ff; border-color: #7b61ff; }
+  .cb svg { opacity: 0; transition: opacity 0.1s; }
+  .cb.on svg { opacity: 1; }
+
+  .comp-info { flex: 1; }
+  .comp-name   { font-size: 12px; font-weight: 500; }
+  .comp-detail { font-size: 10px; color: #71717a; margin-top: 1px; }
+
+  .select-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+  }
+  .link-btn {
+    font-size: 10px;
+    font-weight: 500;
+    color: #71717a;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .link-btn:hover { color: #a1a1aa; }
+
+  /* ── Divider ── */
+  .divider {
+    height: 1px;
+    background: #3a3a3a;
+    flex-shrink: 0;
+  }
+
+  /* ── Action buttons ── */
+  .btn-row {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  button.action {
+    flex: 1;
+    height: 32px;
+    border: none;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s, opacity 0.15s;
+    position: relative;
+  }
+  button.action:disabled { opacity: 0.35; cursor: not-allowed; }
+
+  .btn-primary   { background: #7b61ff; color: #fff; }
+  .btn-primary:hover:not(:disabled)  { background: #6b51ef; }
+  .btn-primary:active:not(:disabled) { background: #5b41df; }
+
+  .btn-secondary { background: #383838; color: #e5e5e5; }
+  .btn-secondary:hover:not(:disabled)  { background: #444; }
+  .btn-secondary:active:not(:disabled) { background: #3d3d3d; }
+
+  /* Spinner for loading state */
+  button.loading { pointer-events: none; }
+  button.loading .btn-label { opacity: 0; }
+  button.loading::after {
+    content: "";
+    position: absolute;
+    width: 13px; height: 13px;
+    border: 2px solid transparent;
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.5s linear infinite;
+    top: 50%; left: 50%;
+    margin: -6.5px 0 0 -6.5px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── Status output ── */
+  #status {
+    font-size: 11px;
+    line-height: 1.7;
+    min-height: 16px;
+    flex-shrink: 0;
+  }
+  .ok   { color: #4ade80; }
+  .err  { color: #f87171; }
+  .line { color: #a3e635; padding-left: 12px; display: block; }
+  .note { color: #71717a; font-size: 10px; margin-top: 4px; display: block; }
+  .info-token { color: #7b61ff; font-size: 10px; margin-top: 2px; display: block; }
+</style>
+</head>
+<body>
+
+<!-- JSON input -->
+<div style="flex-shrink:0">
+  <div class="section-label">Design Tokens JSON <span style="color:#4d4d4d;font-weight:400;text-transform:none;letter-spacing:0">(optional — paste Theme Studio export)</span></div>
+  <textarea id="json" placeholder='{"collections": [{"name": "Tokens", "modes": ["light"], "variables": [...]}]}'></textarea>
+</div>
+
+<div class="divider"></div>
+
+<!-- Component selector -->
+<div style="flex-shrink:0">
+  <div class="select-row">
+    <div class="section-label" style="margin-bottom:0">Components to Generate</div>
+    <button class="link-btn" id="selAllBtn" onclick="toggleAll()">Deselect all</button>
+  </div>
+  <div class="comp-list" id="compList"></div>
+</div>
+
+<div class="divider"></div>
+
+<!-- Actions -->
+<div class="btn-row">
+  <button class="action btn-secondary" id="importBtn" onclick="doImport()">
+    <span class="btn-label">Import Variables</span>
+  </button>
+  <button class="action btn-primary" id="genBtn" onclick="doGenerate()">
+    <span class="btn-label">Generate Components</span>
+  </button>
+</div>
+
+<!-- Status -->
+<div id="status"></div>
+
+<script>
+  // ── Component list ──────────────────────────────────────────
+  let selected = new Set(["buttons", "inputs", "cards", "badges"]);
+
+  const COMPONENTS = [
+    { id: "buttons", name: "Button", detail: "6 variants × 4 sizes = 23 components" },
+    { id: "inputs",  name: "Input",  detail: "5 states: default, filled, focus, disabled, error" },
+    { id: "cards",   name: "Card",   detail: "3 variants: simple, with form, with content" },
+    { id: "badges",  name: "Badge",  detail: "4 variants: default, secondary, destructive, outline" },
+  ];
+
+  const list = document.getElementById("compList");
+  COMPONENTS.forEach(comp => {
+    const el = document.createElement("div");
+    el.className = "comp-item";
+    el.onclick = () => toggle(comp.id);
+    el.innerHTML = `
+      <div class="cb ${selected.has(comp.id) ? "on" : ""}" data-id="${comp.id}">
+        <svg width="9" height="7" viewBox="0 0 9 7" fill="none">
+          <path d="M1 3.5L3.2 5.7L8 1" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="comp-info">
+        <div class="comp-name">${comp.name}</div>
+        <div class="comp-detail">${comp.detail}</div>
+      </div>`;
+    list.appendChild(el);
+  });
+
+  function toggle(id) {
+    selected.has(id) ? selected.delete(id) : selected.add(id);
+    updateCheckboxes();
+  }
+
+  function toggleAll() {
+    if (selected.size === COMPONENTS.length) selected.clear();
+    else COMPONENTS.forEach(c => selected.add(c.id));
+    updateCheckboxes();
+  }
+
+  function updateCheckboxes() {
+    document.querySelectorAll(".cb").forEach(cb => cb.classList.toggle("on", selected.has(cb.dataset.id)));
+    document.getElementById("genBtn").disabled = selected.size === 0;
+    document.getElementById("selAllBtn").textContent = selected.size === COMPONENTS.length ? "Deselect all" : "Select all";
+  }
+
+  // ── Validation ──────────────────────────────────────────────
+  function getJson() {
+    return document.getElementById("json").value.trim();
+  }
+
+  function validateJson(raw) {
+    try { JSON.parse(raw); return null; }
+    catch (e) { return e.message; }
+  }
+
+  // ── Import Variables ────────────────────────────────────────
+  function doImport() {
+    const raw = getJson();
+    clearStatus();
+
+    if (!raw) {
+      setStatus('<span class="err">Paste a Theme Studio JSON first.</span>');
+      return;
+    }
+    const err = validateJson(raw);
+    if (err) { setStatus(`<span class="err">Invalid JSON: ${err}</span>`); return; }
+
+    setLoading("importBtn", true);
+    parent.postMessage({ pluginMessage: { type: "import", json: raw } }, "*");
+  }
+
+  // ── Generate Components ─────────────────────────────────────
+  function doGenerate() {
+    if (!selected.size) return;
+    clearStatus();
+
+    const raw = getJson();
+    if (raw) {
+      const err = validateJson(raw);
+      if (err) { setStatus(`<span class="err">Invalid JSON: ${err}</span>`); return; }
+    }
+
+    setLoading("genBtn", true);
+    parent.postMessage({
+      pluginMessage: {
+        type: "generate",
+        json: raw || null,
+        components: [...selected],
+      }
+    }, "*");
+  }
+
+  // ── Plugin responses ────────────────────────────────────────
+  window.onmessage = function (event) {
+    const msg = event.data.pluginMessage;
+    if (!msg) return;
+
+    setLoading("importBtn", false);
+    setLoading("genBtn", false);
+
+    if (msg.type === "import-success") {
+      const lines = msg.results.map(r => `<span class="line">✓ ${r}</span>`).join("");
+      setStatus(`<span class="ok">Variables imported</span>${lines}<span class="note">Open Local Variables panel in Figma to inspect.</span>`);
+    }
+
+    if (msg.type === "generate-success") {
+      let html = `<span class="ok">Components generated</span>`;
+      if (msg.importResults) {
+        const lines = msg.importResults.map(r => `<span class="line">✓ ${r}</span>`).join("");
+        html += lines;
+        html += `<span class="info-token">↑ Design tokens imported &amp; bound to components.</span>`;
+      } else {
+        html += `<span class="note">Used default Zinc theme (no JSON provided).</span>`;
+      }
+      setStatus(html);
+    }
+
+    if (msg.type === "error") {
+      setStatus(`<span class="err">Error: ${msg.message}</span>`);
+    }
+  };
+
+  // ── UI helpers ──────────────────────────────────────────────
+  function clearStatus() { document.getElementById("status").innerHTML = ""; }
+  function setStatus(html) { document.getElementById("status").innerHTML = html; }
+
+  function setLoading(id, on) {
+    const btn = document.getElementById(id);
+    btn.classList.toggle("loading", on);
+    btn.disabled = on;
+  }
+</script>
+</body>
+</html>

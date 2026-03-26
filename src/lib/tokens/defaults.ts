@@ -23,6 +23,16 @@ export const DEFAULT_TOKENS: ThemeTokens = {
     "--input": { h: 240, s: 5.9, l: 90 },
     "--ring": { h: 240, s: 5.9, l: 10 },
     
+    // Sidebar
+    "--sidebar": { h: 0, s: 0, l: 98.5 },
+    "--sidebar-foreground": { h: 240, s: 10, l: 3.9 },
+    "--sidebar-primary": { h: 240, s: 5.9, l: 10 },
+    "--sidebar-primary-foreground": { h: 0, s: 0, l: 98 },
+    "--sidebar-accent": { h: 240, s: 4.8, l: 95.9 },
+    "--sidebar-accent-foreground": { h: 240, s: 5.9, l: 10 },
+    "--sidebar-border": { h: 240, s: 5.9, l: 90 },
+    "--sidebar-ring": { h: 240, s: 5.9, l: 10 },
+
     // Extended Palette
     "--brand": { h: 240, s: 5.9, l: 10 },
     "--brand-foreground": { h: 0, s: 0, l: 98 },
@@ -118,6 +128,16 @@ export const DEFAULT_TOKENS: ThemeTokens = {
     "--input": { h: 240, s: 3.7, l: 15.9 },
     "--ring": { h: 240, s: 4.9, l: 83.9 },
     
+    // Sidebar
+    "--sidebar": { h: 240, s: 10, l: 3.9 },
+    "--sidebar-foreground": { h: 0, s: 0, l: 98 },
+    "--sidebar-primary": { h: 240, s: 5.9, l: 10 },
+    "--sidebar-primary-foreground": { h: 0, s: 0, l: 98 },
+    "--sidebar-accent": { h: 240, s: 3.7, l: 15.9 },
+    "--sidebar-accent-foreground": { h: 0, s: 0, l: 98 },
+    "--sidebar-border": { h: 240, s: 3.7, l: 15.9 },
+    "--sidebar-ring": { h: 240, s: 4.9, l: 83.9 },
+
     // Extended Palette
     "--brand": { h: 0, s: 0, l: 98 },
     "--brand-foreground": { h: 240, s: 5.9, l: 10 },
@@ -208,7 +228,17 @@ export const TOKEN_DEFINITIONS: Token[] = [
   { id: "--border", cssVar: "--border", label: "Border", description: "Default border color", type: "color", group: "semantic-colors", supportsAlpha: true, editable: true },
   { id: "--input", cssVar: "--input", label: "Input", description: "Border color for inputs like <Input />", type: "color", group: "semantic-colors", supportsAlpha: true, editable: true },
   { id: "--ring", cssVar: "--ring", label: "Ring", description: "Focus ring color", type: "color", group: "semantic-colors", supportsAlpha: true, editable: true },
-  
+
+  // Sidebar
+  { id: "--sidebar", cssVar: "--sidebar", label: "Sidebar", description: "Sidebar background color", type: "color", group: "sidebar", supportsAlpha: true, editable: true },
+  { id: "--sidebar-foreground", cssVar: "--sidebar-foreground", label: "Sidebar Foreground", description: "Text color within the sidebar", type: "color", group: "sidebar", supportsAlpha: true, editable: true },
+  { id: "--sidebar-primary", cssVar: "--sidebar-primary", label: "Sidebar Primary", description: "Active/primary item background in sidebar", type: "color", group: "sidebar", supportsAlpha: true, editable: true },
+  { id: "--sidebar-primary-foreground", cssVar: "--sidebar-primary-foreground", label: "Sidebar Primary Foreground", description: "Text on active sidebar items", type: "color", group: "sidebar", supportsAlpha: true, editable: true },
+  { id: "--sidebar-accent", cssVar: "--sidebar-accent", label: "Sidebar Accent", description: "Hover/accent color for sidebar items", type: "color", group: "sidebar", supportsAlpha: true, editable: true },
+  { id: "--sidebar-accent-foreground", cssVar: "--sidebar-accent-foreground", label: "Sidebar Accent Foreground", description: "Text on hovered sidebar items", type: "color", group: "sidebar", supportsAlpha: true, editable: true },
+  { id: "--sidebar-border", cssVar: "--sidebar-border", label: "Sidebar Border", description: "Border and separator colors in sidebar", type: "color", group: "sidebar", supportsAlpha: true, editable: true },
+  { id: "--sidebar-ring", cssVar: "--sidebar-ring", label: "Sidebar Ring", description: "Focus ring color within sidebar", type: "color", group: "sidebar", supportsAlpha: true, editable: true },
+
   // Extended Palette
   { id: "--brand", cssVar: "--brand", label: "Brand", description: "Main brand color", type: "color", group: "extended-palette", supportsAlpha: true, editable: true },
   { id: "--brand-foreground", cssVar: "--brand-foreground", label: "Brand Foreground", description: "Text color for brand backgrounds", type: "color", group: "extended-palette", supportsAlpha: true, editable: true },

@@ -1,10 +1,24 @@
 import { ThemeTokens, CustomToken, TokenValue, TokenGroup, TokenType } from "../tokens/schema";
-import { hslToRgbFloat, isHSLValue, remToPx } from "../colorUtils";
+import { hslToHex, hslToRgbFloat, isHSLValue, remToPx } from "../colorUtils";
 import { TOKEN_DEFINITIONS } from "../tokens/defaults";
+import { buildPrimitivesCollection } from "../tokens/tailwindPrimitives";
+import { buildColorsCollection, TAILWIND_COLORS, SHADE_NAMES } from "../tokens/tailwindColors";
+
+// Reverse lookup: "#rrggbb" → { collection, name } for every Tailwind palette entry
+const HEX_TO_TAILWIND = new Map<string, { collection: string; name: string }>();
+for (const [colorName, scale] of Object.entries(TAILWIND_COLORS)) {
+  for (const shade of SHADE_NAMES) {
+    HEX_TO_TAILWIND.set(scale[shade].toLowerCase(), {
+      collection: "TailwindCSS Colors",
+      name: `${colorName}/${shade}`,
+    });
+  }
+}
 
 const GROUP_FOLDERS: Record<TokenGroup, string> = {
   "semantic-colors": "colors",
   "extended-palette": "colors",
+  sidebar: "colors",
   radius: "radius",
   shadows: "shadows",
   spacing: "spacing",
@@ -14,24 +28,33 @@ const GROUP_FOLDERS: Record<TokenGroup, string> = {
 
 function formatFigmaValue(type: TokenType, value: TokenValue): unknown {
   if (type === "color" && isHSLValue(value)) {
+    if (value.a === undefined) {
+      const hex = hslToHex(value).toLowerCase();
+      const alias = HEX_TO_TAILWIND.get(hex);
+      if (alias) return alias;
+    }
     return hslToRgbFloat(value);
   }
 
-  if (type === "radius" || type === "spacing" || type === "fontSize" || type === "lineHeight") {
-    // Treat as FLOAT
+  if (type === "fontFamily" && typeof value === "string") {
+    return value.split(",")[0].trim();
+  }
+
+  if (type === "radius" || type === "spacing" || type === "fontSize" || type === "lineHeight" || type === "fontWeight") {
     if (typeof value === "string" && value.includes("rem")) {
-       return remToPx(value);
+      return remToPx(value);
     }
     const num = parseFloat(String(value));
-    return isNaN(num) ? value : num;
+    // Unparseable (e.g. calc() expressions) — fall through to STRING
+    if (!isNaN(num)) return num;
   }
 
   return String(value);
 }
 
-function getFigmaType(type: TokenType): string {
+function resolveFigmaType(type: TokenType, formattedValue: unknown): string {
   if (type === "color") return "COLOR";
-  if (type === "radius" || type === "spacing" || type === "fontSize" || type === "lineHeight") return "FLOAT";
+  if (typeof formattedValue === "number") return "FLOAT";
   return "STRING";
 }
 
@@ -45,17 +68,19 @@ export function exportToFigma(tokens: ThemeTokens, customTokens: CustomToken[]):
 
     if (lightVal === undefined && darkVal === undefined) continue;
 
-    // Simple strip of `--` for pure name. 
-    // e.g. "--primary-foreground" -> "primary-foreground"
     const cleanName = def.cssVar.replace(/^--/, "");
     const folder = GROUP_FOLDERS[def.group] || "misc";
 
     const lightFigmaVal = lightVal !== undefined ? formatFigmaValue(def.type, lightVal) : undefined;
     const darkFigmaVal = darkVal !== undefined ? formatFigmaValue(def.type, darkVal) : lightFigmaVal;
 
+    // Derive the Figma type from the actual formatted value so calc() strings
+    // don't produce a FLOAT variable with a string value.
+    const figmaType = resolveFigmaType(def.type, lightFigmaVal ?? darkFigmaVal);
+
     variables.push({
       name: `${folder}/${cleanName}`,
-      type: getFigmaType(def.type),
+      type: figmaType,
       description: def.description,
       valuesByMode: {
         light: lightFigmaVal,
@@ -66,6 +91,8 @@ export function exportToFigma(tokens: ThemeTokens, customTokens: CustomToken[]):
 
   return JSON.stringify({
     collections: [
+      buildColorsCollection(),
+      buildPrimitivesCollection(),
       {
         name: "Theme Studio",
         modes: ["light", "dark"],

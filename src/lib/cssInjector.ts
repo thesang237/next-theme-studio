@@ -47,17 +47,12 @@ export function injectTokens(
   }
 }
 
-let timeout: ReturnType<typeof setTimeout> | null = null;
-
 export function createInjector(): (
   tokens: ThemeTokens,
   customTokens: CustomToken[],
   activeMode: "light" | "dark"
 ) => void {
   return (tokens, customTokens, activeMode) => {
-    if (timeout) clearTimeout(timeout);
-    timeout = setTimeout(() => {
-      injectTokens(tokens, customTokens, activeMode);
-    }, 16);
+    injectTokens(tokens, customTokens, activeMode);
   };
 }
