@@ -1,7 +1,7 @@
 import { ThemeTokens, CustomToken, TokenValue, TokenGroup, TokenType } from "../tokens/schema";
 import { hslToHex, hslToRgbFloat, isHSLValue, remToPx } from "../colorUtils";
 import { TOKEN_DEFINITIONS } from "../tokens/defaults";
-import { buildPrimitivesCollection } from "../tokens/tailwindPrimitives";
+import { buildPrimitivesCollection, TAILWIND_PRIMITIVE_GROUPS } from "../tokens/tailwindPrimitives";
 import { buildColorsCollection, TAILWIND_COLORS, SHADE_NAMES } from "../tokens/tailwindColors";
 
 // Reverse lookup: "#rrggbb" → { collection, name } for every Tailwind palette entry
@@ -15,6 +15,20 @@ for (const [colorName, scale] of Object.entries(TAILWIND_COLORS)) {
   }
 }
 
+// Reverse lookup: px value → { collection, name } for every Tailwind border-radius primitive
+const PX_TO_TAILWIND_RADIUS = new Map<number, { collection: string; name: string }>();
+{
+  const radiusGroup = TAILWIND_PRIMITIVE_GROUPS.find(g => g.id === "border-radius");
+  if (radiusGroup) {
+    for (const token of radiusGroup.tokens) {
+      PX_TO_TAILWIND_RADIUS.set(token.value, {
+        collection: "TailwindCSS Primitives",
+        name: `${radiusGroup.id}/${token.name}`,
+      });
+    }
+  }
+}
+
 const GROUP_FOLDERS: Record<TokenGroup, string> = {
   "semantic-colors": "colors",
   "extended-palette": "colors",
@@ -25,6 +39,42 @@ const GROUP_FOLDERS: Record<TokenGroup, string> = {
   typography: "typography",
   custom: "custom",
 };
+
+/**
+ * Resolves `var(--x)` and `calc(var(--x) ± Npx)` radius expressions to a
+ * concrete rem string using the current mode's token map.
+ */
+function resolveRadiusCalc(value: string, modeTokens: Record<string, TokenValue>): string {
+  if (!value.includes("var(")) return value;
+
+  // var(--x) → dereference
+  const varMatch = value.match(/^var\((--[a-z-]+)\)$/);
+  if (varMatch) {
+    const refVal = modeTokens[varMatch[1]];
+    if (typeof refVal === "string" && !refVal.includes("var(") && !refVal.includes("calc("))
+      return refVal;
+    return value;
+  }
+
+  // calc(var(--x) ± Npx)
+  const calcMatch = value.match(/^calc\(var\((--[a-z-]+)\)\s*([+-])\s*(\d+(?:\.\d+)?)px\)$/);
+  if (calcMatch) {
+    const [, varRef, op, pxStr] = calcMatch;
+    const refVal = modeTokens[varRef];
+    if (typeof refVal === "string") {
+      let basePx: number;
+      if (refVal.endsWith("rem")) basePx = parseFloat(refVal) * 16;
+      else if (refVal.endsWith("px")) basePx = parseFloat(refVal);
+      else { const n = parseFloat(refVal); basePx = isNaN(n) ? 0 : n * 16; }
+      const delta = parseFloat(pxStr);
+      const result = op === "+" ? basePx + delta : basePx - delta;
+      const rem = result / 16;
+      return `${+rem.toFixed(4)}rem`;
+    }
+  }
+
+  return value;
+}
 
 function formatFigmaValue(type: TokenType, value: TokenValue): unknown {
   if (type === "color" && isHSLValue(value)) {
@@ -40,7 +90,19 @@ function formatFigmaValue(type: TokenType, value: TokenValue): unknown {
     return value.split(",")[0].trim();
   }
 
-  if (type === "radius" || type === "spacing" || type === "fontSize" || type === "lineHeight" || type === "fontWeight") {
+  if (type === "radius") {
+    // px value (e.g. "9999px") should NOT go through remToPx (which multiplies by 16)
+    const px = (typeof value === "string" && value.includes("rem"))
+      ? remToPx(value)
+      : parseFloat(String(value));
+    if (!isNaN(px)) {
+      const alias = PX_TO_TAILWIND_RADIUS.get(px);
+      if (alias) return alias;
+      return px;
+    }
+  }
+
+  if (type === "spacing" || type === "fontSize" || type === "lineHeight" || type === "fontWeight") {
     if (typeof value === "string" && value.includes("rem")) {
       return remToPx(value);
     }
@@ -55,6 +117,10 @@ function formatFigmaValue(type: TokenType, value: TokenValue): unknown {
 function resolveFigmaType(type: TokenType, formattedValue: unknown): string {
   if (type === "color") return "COLOR";
   if (typeof formattedValue === "number") return "FLOAT";
+  // Alias to another variable (e.g. TailwindCSS Primitives) — inherit the target's type
+  if (typeof formattedValue === "object" && formattedValue !== null && "collection" in formattedValue) {
+    return "FLOAT";
+  }
   return "STRING";
 }
 
@@ -63,10 +129,16 @@ export function exportToFigma(tokens: ThemeTokens, customTokens: CustomToken[]):
   const allDefinitions = [...TOKEN_DEFINITIONS, ...customTokens];
 
   for (const def of allDefinitions) {
-    const lightVal = tokens.light[def.cssVar];
-    const darkVal = tokens.dark[def.cssVar];
+    let lightVal = tokens.light[def.cssVar];
+    let darkVal = tokens.dark[def.cssVar];
 
     if (lightVal === undefined && darkVal === undefined) continue;
+
+    // Resolve calc/var radius expressions to concrete values using the current token map
+    if (def.type === "radius") {
+      if (typeof lightVal === "string") lightVal = resolveRadiusCalc(lightVal, tokens.light);
+      if (typeof darkVal === "string") darkVal = resolveRadiusCalc(darkVal, tokens.dark);
+    }
 
     const cleanName = def.cssVar.replace(/^--/, "");
     const folder = GROUP_FOLDERS[def.group] || "misc";

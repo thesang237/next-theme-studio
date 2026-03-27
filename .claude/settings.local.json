@@ -3,7 +3,11 @@
     "allow": [
       "Bash(npx tsc:*)",
       "Bash(npx shadcn@latest add sidebar --yes)",
-      "Bash(npx shadcn@latest add sidebar)"
+      "Bash(npx shadcn@latest add sidebar)",
+      "Bash(node -e \"const d = require\\(''''./examples/TailwindCSS/Default.tokens.json''''\\); console.log\\(JSON.stringify\\(d[''''border-radius''''], null, 2\\)\\)\")",
+      "Bash(node:*)",
+      "Bash(node -p \"JSON.stringify\\(require\\(''''./examples/TailwindCSS/Default.tokens.json''''\\)[''''border-radius'''']\\)\")",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); [print\\(k,'''':'''',v[''''$value'''']\\) for k,v in d.items\\(\\)]\")"
     ]
   }
 }

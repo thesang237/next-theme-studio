@@ -21,7 +21,7 @@ interface SliderConfig {
 }
 
 const SLIDER_CONFIG: Record<string, SliderConfig> = {
-  radius:   { min: 0,   max: 2,   step: 0.05, unit: "rem", showSlider: true  },
+  radius:   { min: 0,   max: 2,   step: 0.05, unit: "rem", showSlider: false },
   spacing:  { min: 0,   max: 8,   step: 0.25, unit: "rem", showSlider: true  },
   fontSize: { min: 0.5, max: 4,   step: 0.05, unit: "rem", showSlider: true  },
 };

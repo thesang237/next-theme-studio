@@ -53,10 +53,10 @@ export const DEFAULT_TOKENS: ThemeTokens = {
 
     // Radius
     "--radius": "0.5rem",
-    "--radius-sm": "calc(var(--radius) - 2px)",
-    "--radius-md": "calc(var(--radius) - 4px)",
-    "--radius-lg": "var(--radius)",
-    "--radius-xl": "calc(var(--radius) + 4px)",
+    "--radius-sm": "0.375rem",
+    "--radius-md": "0.25rem",
+    "--radius-lg": "0.5rem",
+    "--radius-xl": "0.75rem",
     "--radius-full": "9999px",
 
     // Typography
@@ -158,10 +158,10 @@ export const DEFAULT_TOKENS: ThemeTokens = {
 
     // Inherited identical for structural/spacing tokens in dark mode
     "--radius": "0.5rem",
-    "--radius-sm": "calc(var(--radius) - 2px)",
-    "--radius-md": "calc(var(--radius) - 4px)",
-    "--radius-lg": "var(--radius)",
-    "--radius-xl": "calc(var(--radius) + 4px)",
+    "--radius-sm": "0.375rem",
+    "--radius-md": "0.25rem",
+    "--radius-lg": "0.5rem",
+    "--radius-xl": "0.75rem",
     "--radius-full": "9999px",
     "--font-sans": "Inter, sans-serif",
     "--font-mono": "Roboto Mono, monospace",
